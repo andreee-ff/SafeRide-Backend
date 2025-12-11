@@ -1,0 +1,2482 @@
+{
+  "info": {
+    "_postman_id": "fc418940-1ddc-4810-9975-86cb210948c3",
+    "name": "Ride App API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "{id}",
+          "item": [
+            {
+              "name": "Get User",
+              "id": "4c3a04ec-9aa1-4a0e-8767-2ef6f5714c37",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/users/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7261"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "ca0d0596-d0d4-434b-9762-7210803627e8",
+                  "name": "Successful Response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/users/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "users",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"id\": 2694,\n  \"username\": \"string\"\n}"
+                },
+                {
+                  "id": "a8f6bd40-b4a4-45c0-82c5-785b06af72b7",
+                  "name": "Not Found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/users/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "users",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "71969134-7c29-48a6-9374-cb45b7d811ee",
+                  "name": "Validation Error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/users/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "users",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                  "code": 422,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        3573\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        5669\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}"
+                }
+              ]
+            }
+          ],
+          "id": "3287a417-0ee2-4bf0-b622-8886e619d403"
+        },
+        {
+          "name": "Get List Users",
+          "id": "46ba2ae6-95e4-494e-ab53-2c6dfce641eb",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9f265170-71f4-49c3-9abb-f139da3acc31",
+              "name": "Successful Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/users/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "_postman_previewtype": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 2889,\n    \"username\": \"string\"\n  },\n  {\n    \"id\": 388,\n    \"username\": \"string\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Create User",
+          "id": "0e1bdf96-7a70-476f-8dc3-6bfbdb113b05",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"string\",\n  \"password\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "66126507-a257-46e6-bd5a-d1f4100f8971",
+              "name": "Successful Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"string\",\n  \"password\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "_postman_previewtype": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 2694,\n  \"username\": \"string\"\n}"
+            },
+            {
+              "id": "1561515c-d296-4f82-b7bb-b19a5bf9215b",
+              "name": "Conflict",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"string\",\n  \"password\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "text",
+              "_postman_previewtype": "html",
+              "body": ""
+            },
+            {
+              "id": "36efe517-ad72-41af-8068-9a80fc4b60cc",
+              "name": "Validation Error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"string\",\n  \"password\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "_postman_previewtype": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        3573\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        5669\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ],
+      "id": "7dc3f9ab-9266-4d76-951e-226e9cc408d5"
+    },
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "login",
+          "item": [
+            {
+              "name": "Login",
+              "id": "6d82dca7-afe0-43c1-b8c3-361cfc75d548",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "username",
+                      "value": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "string"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password"
+                    },
+                    {
+                      "key": "scope",
+                      "value": ""
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "string"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "d53e4219-88e7-44b0-8282-9a5dc4e83b25",
+                  "name": "Successful Response",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/x-www-form-urlencoded"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "urlencoded",
+                      "urlencoded": [
+                        {
+                          "key": "username",
+                          "value": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "string"
+                        },
+                        {
+                          "key": "grant_type",
+                          "value": "password"
+                        },
+                        {
+                          "key": "scope",
+                          "value": ""
+                        },
+                        {
+                          "key": "client_id",
+                          "value": "string"
+                        },
+                        {
+                          "key": "client_secret",
+                          "value": "string"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/login",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"access_token\": \"string\",\n  \"token_type\": \"bearer\"\n}"
+                },
+                {
+                  "id": "bc52f090-15ce-4dad-a042-d80a7bf85674",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/x-www-form-urlencoded"
+                      }
+                    ],
+                    "body": {
+                      "mode": "urlencoded",
+                      "urlencoded": [
+                        {
+                          "key": "username",
+                          "value": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "string"
+                        },
+                        {
+                          "key": "grant_type",
+                          "value": "password"
+                        },
+                        {
+                          "key": "scope",
+                          "value": ""
+                        },
+                        {
+                          "key": "client_id",
+                          "value": "string"
+                        },
+                        {
+                          "key": "client_secret",
+                          "value": "string"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/login",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "1af7a6e5-e128-4480-bb07-3653f360139f",
+                  "name": "Validation Error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/x-www-form-urlencoded"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "urlencoded",
+                      "urlencoded": [
+                        {
+                          "key": "username",
+                          "value": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "string"
+                        },
+                        {
+                          "key": "grant_type",
+                          "value": "password"
+                        },
+                        {
+                          "key": "scope",
+                          "value": ""
+                        },
+                        {
+                          "key": "client_id",
+                          "value": "string"
+                        },
+                        {
+                          "key": "client_secret",
+                          "value": "string"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/login",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                  "code": 422,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        3573\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        5669\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}"
+                }
+              ]
+            }
+          ],
+          "id": "fb821617-b88d-420f-8d0f-c85d67a0a491"
+        },
+        {
+          "name": "me",
+          "item": [
+            {
+              "name": "Get Me",
+              "id": "1277562c-4f35-4906-91fa-e5e0fe00030b",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "oauth2",
+                  "oauth2": [
+                    {
+                      "key": "accessTokenUrl",
+                      "value": "/auth/login",
+                      "type": "string"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password_credentials",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "72ffd9d7-11a8-4601-9225-c8e14ac116fa",
+                  "name": "Successful Response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/me",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "me"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"id\": 2694,\n  \"username\": \"string\"\n}"
+                },
+                {
+                  "id": "d17e8f5d-3866-4aad-9fef-c6d7e49abea4",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/me",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "me"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                }
+              ]
+            }
+          ],
+          "id": "ec32f147-d9a4-4d5f-a09d-9f4a0a5750d3"
+        }
+      ],
+      "id": "b718afeb-8d55-4f2c-a84f-a995358bfc89"
+    },
+    {
+      "name": "rides",
+      "item": [
+        {
+          "name": "code",
+          "item": [
+            {
+              "name": "{code}",
+              "item": [
+                {
+                  "name": "Get Ride By Code",
+                  "id": "bdcb4e12-227f-4471-8c03-c57c2145c311",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/code/:code",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        "code",
+                        ":code"
+                      ],
+                      "variable": [
+                        {
+                          "key": "code",
+                          "value": "string"
+                        }
+                      ]
+                    }
+                  },
+                  "response": [
+                    {
+                      "id": "20ab0672-f517-403a-8148-00a2144c2758",
+                      "name": "Successful Response",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/rides/code/:code",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "rides",
+                            "code",
+                            ":code"
+                          ],
+                          "variable": [
+                            {
+                              "key": "code",
+                              "value": "string"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "_postman_previewtype": "html",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "body": "{\n  \"title\": \"string\",\n  \"start_time\": \"string\",\n  \"id\": 1023,\n  \"code\": \"string\",\n  \"created_by_user_id\": 6664,\n  \"created_at\": \"string\",\n  \"is_active\": false,\n  \"description\": \"string\"\n}"
+                    },
+                    {
+                      "id": "a115b107-53ac-4b90-b54d-e07b8f6f70b2",
+                      "name": "Not Found",
+                      "originalRequest": {
+                        "method": "GET",
+                        "url": {
+                          "raw": "{{baseUrl}}/rides/code/:code",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "rides",
+                            "code",
+                            ":code"
+                          ],
+                          "variable": [
+                            {
+                              "key": "code",
+                              "value": "string"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "_postman_previewtype": "html",
+                      "body": ""
+                    },
+                    {
+                      "id": "ea185b28-070f-43c6-888e-17b22aa8491c",
+                      "name": "Validation Error",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/rides/code/:code",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "rides",
+                            "code",
+                            ":code"
+                          ],
+                          "variable": [
+                            {
+                              "key": "code",
+                              "value": "string"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                      "code": 422,
+                      "_postman_previewlanguage": "json",
+                      "_postman_previewtype": "html",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        3573\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        5669\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}"
+                    }
+                  ]
+                }
+              ],
+              "id": "8bea28ee-2756-4b86-90de-4045be4bd612"
+            }
+          ],
+          "id": "148327b5-f402-4d37-9a96-6d54fdea5450"
+        },
+        {
+          "name": "{id}",
+          "item": [
+            {
+              "name": "Get Ride By Id",
+              "id": "3fae2380-9a4f-43e8-b1f3-af510dc159a7",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/rides/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "rides",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7261"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "4df7c02f-0e6d-4dd8-9dc1-1299669acbc2",
+                  "name": "Successful Response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"title\": \"string\",\n  \"start_time\": \"string\",\n  \"id\": 1023,\n  \"code\": \"string\",\n  \"created_by_user_id\": 6664,\n  \"created_at\": \"string\",\n  \"is_active\": false,\n  \"description\": \"string\"\n}"
+                },
+                {
+                  "id": "2ee5936b-59bc-4fb8-9916-a50235f03241",
+                  "name": "Not Found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "782f5933-d133-4117-847b-8c62903a51d3",
+                  "name": "Validation Error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                  "code": 422,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        3573\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        5669\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "Delete Ride By Id",
+              "id": "0e035248-615f-4838-a682-dbbde786db1f",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "oauth2",
+                  "oauth2": [
+                    {
+                      "key": "accessTokenUrl",
+                      "value": "/auth/login",
+                      "type": "string"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password_credentials",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/rides/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "rides",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7261"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "87ead0fd-1e89-41b8-8503-6830a887789f",
+                  "name": "Successful Response",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "No Content",
+                  "code": 204,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "51857e3c-9436-4696-856b-61cdb2e5aad4",
+                  "name": "Forbidden",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "12cdd013-30fa-46e3-a8a7-4645e7899ecf",
+                  "name": "Not Found",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "c685311e-5f69-4699-8c98-f0db889521f5",
+                  "name": "Validation Error",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                  "code": 422,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        3573\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        5669\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "Update Ride By Id",
+              "id": "eab10ce6-e48d-4aa6-a5cc-b4766a419c02",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "oauth2",
+                  "oauth2": [
+                    {
+                      "key": "accessTokenUrl",
+                      "value": "/auth/login",
+                      "type": "string"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password_credentials",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": null,\n  \"description\": \"string\",\n  \"start_time\": null,\n  \"is_active\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/rides/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "rides",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7261"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "1e52030c-b1dd-4f4b-8151-a6aa14fa7e92",
+                  "name": "Successful Response",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"title\": null,\n  \"description\": \"string\",\n  \"start_time\": null,\n  \"is_active\": false\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"title\": \"string\",\n  \"start_time\": \"string\",\n  \"id\": 1023,\n  \"code\": \"string\",\n  \"created_by_user_id\": 6664,\n  \"created_at\": \"string\",\n  \"is_active\": false,\n  \"description\": \"string\"\n}"
+                },
+                {
+                  "id": "ed439a59-b0f6-492c-9275-c1a349f85734",
+                  "name": "Forbidden",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"title\": null,\n  \"description\": \"string\",\n  \"start_time\": null,\n  \"is_active\": false\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "e0ae5833-9ec7-4b8b-8964-f613564ccb6c",
+                  "name": "Not Found",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"title\": null,\n  \"description\": \"string\",\n  \"start_time\": null,\n  \"is_active\": false\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "5bc0014f-0d0d-40fb-a518-67b113b8dd9a",
+                  "name": "Validation Error",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"title\": null,\n  \"description\": \"string\",\n  \"start_time\": null,\n  \"is_active\": false\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/rides/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "rides",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                  "code": 422,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        3573\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        5669\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}"
+                }
+              ]
+            }
+          ],
+          "id": "14c4bfbd-faf1-4696-b365-8b89a40907e3"
+        },
+        {
+          "name": "Get List Rides",
+          "id": "3896713c-9653-4f63-ba5e-e0b12a9cc015",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rides/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rides",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "c48a970f-ce9b-4343-af50-7019a1090965",
+              "name": "Successful Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/rides/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "rides",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "_postman_previewtype": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"title\": \"string\",\n    \"start_time\": \"string\",\n    \"id\": 3117,\n    \"code\": \"string\",\n    \"created_by_user_id\": 3310,\n    \"created_at\": \"string\",\n    \"is_active\": true,\n    \"description\": \"string\"\n  },\n  {\n    \"title\": \"string\",\n    \"start_time\": \"string\",\n    \"id\": 4786,\n    \"code\": \"string\",\n    \"created_by_user_id\": 7957,\n    \"created_at\": \"string\",\n    \"is_active\": true,\n    \"description\": \"string\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Create Ride",
+          "id": "67d2353e-fb77-45ba-82fe-cb94bd0b7c00",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessTokenUrl",
+                  "value": "/auth/login",
+                  "type": "string"
+                },
+                {
+                  "key": "grant_type",
+                  "value": "password_credentials",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"string\",\n  \"start_time\": \"1956-12-10T13:32:56.943Z\",\n  \"description\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/rides/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rides",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "d7ce9c50-2d14-4976-aa22-2bd1a2491ae5",
+              "name": "Successful Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: oauth2",
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"string\",\n  \"start_time\": \"1956-12-10T13:32:56.943Z\",\n  \"description\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/rides/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "rides",
+                    ""
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "_postman_previewtype": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"title\": \"string\",\n  \"start_time\": \"string\",\n  \"id\": 1023,\n  \"code\": \"string\",\n  \"created_by_user_id\": 6664,\n  \"created_at\": \"string\",\n  \"is_active\": false,\n  \"description\": \"string\"\n}"
+            },
+            {
+              "id": "be30a839-1d71-4139-94e3-7772d1693681",
+              "name": "Unprocessable Content",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: oauth2",
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"string\",\n  \"start_time\": \"1956-12-10T13:32:56.943Z\",\n  \"description\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/rides/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "rides",
+                    ""
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "_postman_previewlanguage": "text",
+              "_postman_previewtype": "html",
+              "body": ""
+            }
+          ]
+        }
+      ],
+      "id": "6dbd3030-a41b-40f5-adcf-677b227a9f89"
+    },
+    {
+      "name": "participations",
+      "item": [
+        {
+          "name": "{id}",
+          "item": [
+            {
+              "name": "Get Participation By Id",
+              "id": "37253b2c-1191-4917-8376-dd27d443fd81",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/participations/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "participations",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7261"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "24fd4fe6-54f2-4a4e-b38f-a12335f7934a",
+                  "name": "Successful Response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/participations/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "participations",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"id\": 7474,\n  \"user_id\": 4215,\n  \"ride_id\": 6354,\n  \"latitude\": 2765.413346133234,\n  \"longitude\": 5032.796272763014,\n  \"updated_at\": \"string\"\n}"
+                },
+                {
+                  "id": "e3dbb0ec-ec80-46db-bfa9-03bb26c80cef",
+                  "name": "Not Found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/participations/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "participations",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "f3b516b6-037c-4ff3-96e7-55b77423182a",
+                  "name": "Validation Error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/participations/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "participations",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                  "code": 422,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        3573\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        5669\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "Update Participation By Id",
+              "id": "0f5fe15b-71be-42d5-ac0a-2c898e59b628",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "oauth2",
+                  "oauth2": [
+                    {
+                      "key": "accessTokenUrl",
+                      "value": "/auth/login",
+                      "type": "string"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password_credentials",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"latitude\": 8643.21540777933,\n  \"longitude\": 1147.3697036247788,\n  \"updated_at\": \"1968-03-12T04:16:34.780Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/participations/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "participations",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7261"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "13eb68fd-a448-409a-9e5b-f8f3798240ca",
+                  "name": "Successful Response",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"latitude\": 8643.21540777933,\n  \"longitude\": 1147.3697036247788,\n  \"updated_at\": \"1968-03-12T04:16:34.780Z\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/participations/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "participations",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"id\": 7474,\n  \"user_id\": 4215,\n  \"ride_id\": 6354,\n  \"latitude\": 2765.413346133234,\n  \"longitude\": 5032.796272763014,\n  \"updated_at\": \"string\"\n}"
+                },
+                {
+                  "id": "070bf3ee-b940-4014-a7f7-2f5d07d750d7",
+                  "name": "Forbidden",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"latitude\": 8643.21540777933,\n  \"longitude\": 1147.3697036247788,\n  \"updated_at\": \"1968-03-12T04:16:34.780Z\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/participations/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "participations",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "c15ee7b1-1de0-487d-a407-2f8522734bbe",
+                  "name": "Not Found",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"latitude\": 8643.21540777933,\n  \"longitude\": 1147.3697036247788,\n  \"updated_at\": \"1968-03-12T04:16:34.780Z\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/participations/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "participations",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "text",
+                  "_postman_previewtype": "html",
+                  "body": ""
+                },
+                {
+                  "id": "c4cc0b2c-5075-421c-b762-9b7bd9498ce3",
+                  "name": "Validation Error",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: oauth2",
+                        "key": "Authorization",
+                        "value": "<token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"latitude\": 8643.21540777933,\n  \"longitude\": 1147.3697036247788,\n  \"updated_at\": \"1968-03-12T04:16:34.780Z\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/participations/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "participations",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "7261"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+                  "code": 422,
+                  "_postman_previewlanguage": "json",
+                  "_postman_previewtype": "html",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        3573\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        5669\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}"
+                }
+              ]
+            }
+          ],
+          "id": "26c731b6-15b8-487e-97ce-140039f5e9c4"
+        },
+        {
+          "name": "Get List Participations",
+          "id": "dd02ee13-a1eb-4387-ab89-5f0c003ee355",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/participations/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "participations",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "27a9350d-f211-49d3-b09d-d150e50e933e",
+              "name": "Successful Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/participations/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "participations",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "_postman_previewtype": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 7240,\n    \"user_id\": 2278,\n    \"ride_id\": 9268,\n    \"latitude\": 406.178577329257,\n    \"longitude\": 4607.402492895749,\n    \"updated_at\": \"string\"\n  },\n  {\n    \"id\": 5351,\n    \"user_id\": 9053,\n    \"ride_id\": 7438,\n    \"latitude\": 1266.3174209501049,\n    \"longitude\": 5128.213089083731,\n    \"updated_at\": \"string\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Create Participation",
+          "id": "1dc70c81-0576-485c-87c8-c71d0525403b",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessTokenUrl",
+                  "value": "/auth/login",
+                  "type": "string"
+                },
+                {
+                  "key": "grant_type",
+                  "value": "password_credentials",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_code\": \"string\",\n  \"latitude\": 7260.950061209024,\n  \"longitude\": null,\n  \"updated_at\": \"2008-04-02T00:35:05.570Z\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/participations/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "participations",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "8890e740-92b0-4738-be2b-0b7315823fec",
+              "name": "Successful Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: oauth2",
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ride_code\": \"string\",\n  \"latitude\": 7260.950061209024,\n  \"longitude\": null,\n  \"updated_at\": \"2008-04-02T00:35:05.570Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/participations/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "participations",
+                    ""
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "_postman_previewtype": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 7474,\n  \"user_id\": 4215,\n  \"ride_id\": 6354,\n  \"latitude\": 2765.413346133234,\n  \"longitude\": 5032.796272763014,\n  \"updated_at\": \"string\"\n}"
+            },
+            {
+              "id": "a2436bb4-94f1-482d-988c-847fe597a6a9",
+              "name": "Unprocessable Content",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: oauth2",
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ride_code\": \"string\",\n  \"latitude\": 7260.950061209024,\n  \"longitude\": null,\n  \"updated_at\": \"2008-04-02T00:35:05.570Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/participations/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "participations",
+                    ""
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "_postman_previewlanguage": "text",
+              "_postman_previewtype": "html",
+              "body": ""
+            }
+          ]
+        }
+      ],
+      "id": "2770bfc5-0e8a-462c-9564-f099f22a65b3"
+    }
+  ],
+  "auth": {
+    "type": "jwt",
+    "jwt": [
+      {
+        "key": "algorithm",
+        "value": "HS256",
+        "type": "string"
+      },
+      {
+        "key": "isSecretBase64Encoded",
+        "value": false,
+        "type": "boolean"
+      },
+      {
+        "key": "payload",
+        "value": "{}",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "headerPrefix",
+        "value": "Bearer",
+        "type": "string"
+      },
+      {
+        "key": "queryParamKey",
+        "value": "token",
+        "type": "string"
+      },
+      {
+        "key": "header",
+        "value": "{}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "id": "3ea1ad4a-172b-4331-8c5d-4a9fe489d794",
+      "key": "baseUrl",
+      "value": "/"
+    }
+  ]
+}
