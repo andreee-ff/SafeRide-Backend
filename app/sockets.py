@@ -29,14 +29,12 @@ async def join_ride(sid, data):
     
     # In a real app, we might validate the code exists here, 
     # but for speed, we just join the room named by the code.
-    sio.enter_room(sid, ride_code)
-    print(f"Client {sid} joined room {ride_code}")
-    print(f"DEBUG: Rooms for {sid}: {sio.rooms(sid)}")
+    await sio.enter_room(sid, ride_code)
+    # print(f"Client {sid} joined room {ride_code}")
     await sio.emit('message', {'msg': f'Joined ride {ride_code}'}, room=sid)
 
 @sio.event
 async def update_location(sid, data):
-    print(f"DEBUG: update_location handler called with {data}")
     """
     Client sends new GPS coordinates.
     data: {
@@ -60,34 +58,17 @@ async def update_location(sid, data):
     # NOTE: In a perfect world, we'd save to DB here asynchronously.
     # For now, we trust the frontend also calls the API or we do it here.
     # To keeps things fast and simple as requested "like the Flask example":
-    # 1. Save to DB (optional optimization: fire and forget)
     # 2. Broadcast
     
-    # Let's do a quick mock save
+    # 2. Broadcast
+    # We broadcast to the room corresponding to the ride_code
     try:
-        # db = SessionLocal()
-        # repo = ParticipationRepository(db)
-        
-        # DEBUG: Check participants
-        # Note: get_participants might be async or sync depending on manager, usually sync for InMemory
-        # For AsyncServer, usually we can just inspect if using InMemoryManager
-        # But there isn't a direct public API for participants in async server always simple.
-        # Let's try global emit instead to prove broadcasting works.
-        
-        print(f"DEBUG: Broadcasting to ROOM {ride_code}")
-        await sio.emit('message', {'msg': f'DEBUG: Broadcast to room {ride_code}'}, room=ride_code)
-        
-        print(f"DEBUG: Broadcasting GLOBALLY")
-        await sio.emit('message', {'msg': f'DEBUG: GLOBAL BROADCAST'})
-        
         await sio.emit('location_update', {
             'user_id': user_id,
             'latitude': lat,
             'longitude': lng,
             'location_timestamp': datetime.utcnow().isoformat()
         }, room=ride_code)
-        
-        print(f"Location update for user {user_id} in ride {ride_code}: {lat}, {lng}")
         
     except Exception as e:
         print(f"Error in socket update: {e}")
