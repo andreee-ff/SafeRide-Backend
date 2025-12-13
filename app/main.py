@@ -79,6 +79,12 @@ def create_app() -> FastAPI:
         tags=["Participation"],
     )
 
+    app.include_router(
+        routers.simulation_router,
+        prefix="/simulation",
+        tags=["Debug & Tools"],
+    )
+
     # Mount Socket.IO
     from app.sockets import sio
     # This wraps the FastAPI app with the Socket.IO ASGI app handler

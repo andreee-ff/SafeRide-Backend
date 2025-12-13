@@ -23,7 +23,7 @@ from app.routers.dependencies import get_current_user
 router = APIRouter()
 
 
-# ------------- PARTICIPANTS ROUTES ------------- #
+# ------------- PARTICIPATION ROUTES ------------- #
 
 @router.get(
         "/",
@@ -40,42 +40,29 @@ def get_list_participations(
     participations = participation_repository.get_all_participations()
     return [ParticipationResponse.model_validate(r) for r in participations]
 
+
 @router.get(
-    "/ride/{ride_id}/",
-    response_model=List[ParticipantResponse],
-    status_code=status.HTTP_200_OK,
-    responses={status.HTTP_404_NOT_FOUND: {}},
+        "/{id}",
+        response_model=ParticipationResponse,
+        status_code=status.HTTP_200_OK,
+        responses={status.HTTP_404_NOT_FOUND: {}},
 )
-def get_ride_participants(
-    ride_id: int,
-    participation_repository: Annotated[
-        ParticipationRepository,
-        Depends(get_participation_repository),
-    ],
-    ride_repository: Annotated[
-        RideRepository,
-        Depends(get_ride_repository),
-    ],
-) -> List[ParticipantResponse]:
-    # Verify ride exists
-    ride = ride_repository.get_by_id(ride_id=ride_id)
-    if not ride:
+def get_participation_by_id(
+        id: int,
+        participation_repository: Annotated[
+            ParticipationRepository, 
+            Depends(get_participation_repository),
+        ],
+) -> ParticipationResponse:
+
+    participation = participation_repository.get_by_id(participation_id=id)
+    if not participation:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    
-    participations = participation_repository.get_by_ride_id(ride_id=ride_id)
-    
-    return [
-        ParticipantResponse(
-            id=p.id,
-            user_id=p.user_id,
-            username=p.participant.username,
-            joined_at=p.joined_at,
-            latitude=p.latitude,
-            longitude=p.longitude,
-            location_timestamp=p.location_timestamp,
-        )
-        for p in participations
-    ]
+    return ParticipationResponse.model_validate(participation)
+
+
+
+# ------------- PARTICIPATION POST ROUTE ------- #
 
 @router.post(
     "/",
@@ -106,24 +93,7 @@ def create_participation(
     
     return ParticipationResponse.model_validate(participation_model)
 
-@router.get(
-        "/{id}",
-        response_model=ParticipationResponse,
-        status_code=status.HTTP_200_OK,
-        responses={status.HTTP_404_NOT_FOUND: {}},
-)
-def get_participation_by_id(
-        id: int,
-        participation_repository: Annotated[
-            ParticipationRepository, 
-            Depends(get_participation_repository),
-        ],
-) -> ParticipationResponse:
-
-    participation = participation_repository.get_by_id(participation_id=id)
-    if not participation:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    return ParticipationResponse.model_validate(participation)
+# ------------- PARTICIPATION UPDATE ROUTE ------- #
 
 @router.put(
     "/{id}",
@@ -167,6 +137,8 @@ def update_participation_by_id(
 
     return ParticipationResponse.model_validate(participation_model)
 
+
+# ------------- PARTICIPATION DELETE ROUTE ------- #
 
 @router.delete(
     "/{id}",

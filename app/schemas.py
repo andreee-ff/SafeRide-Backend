@@ -111,4 +111,13 @@ class ParticipantResponse(TimestampMixin):
     location_timestamp: datetime | None = None
 
 
+#------------------------ SIMULATION 
+
+class SimulationStart(BaseModel):
+    ride_code: str
+    count: int = 1
+    username_base: str = "swarm_user"
+    
+class SimulationAnimate(BaseModel):
+    ride_id: int
 

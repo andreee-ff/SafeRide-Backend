@@ -58,6 +58,7 @@ def seed(engine):
                 latitude=48.1351,
                 longitude=11.5820,
                 updated_at=datetime.now(timezone.utc),
+                location_timestamp=datetime.now(timezone.utc),
             )
             session.add(part)
             print("📍 Created demo participation")
@@ -203,6 +204,7 @@ def seed_massive(engine, num_users=10, num_rides=20, num_participations=50):
                 latitude=lat,
                 longitude=lon,
                 updated_at=random_datetime(),
+                location_timestamp=random_datetime(),
             )
             session.add(participation)
 

@@ -48,6 +48,7 @@ async def update_location(sid, data):
     user_id = data.get('user_id')
     lat = data.get('latitude')
     lng = data.get('longitude')
+    timestamp = data.get('location_timestamp') or datetime.utcnow().isoformat()
     
     if not (ride_code and user_id and lat and lng):
         return
@@ -58,7 +59,6 @@ async def update_location(sid, data):
     # NOTE: In a perfect world, we'd save to DB here asynchronously.
     # For now, we trust the frontend also calls the API or we do it here.
     # To keeps things fast and simple as requested "like the Flask example":
-    # 2. Broadcast
     
     # 2. Broadcast
     # We broadcast to the room corresponding to the ride_code
@@ -67,7 +67,7 @@ async def update_location(sid, data):
             'user_id': user_id,
             'latitude': lat,
             'longitude': lng,
-            'location_timestamp': datetime.utcnow().isoformat()
+            'location_timestamp': timestamp
         }, room=ride_code)
         
     except Exception as e:

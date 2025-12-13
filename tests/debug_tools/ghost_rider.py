@@ -5,7 +5,19 @@ import sys
 import random
 
 # Ghost Rider: Simulates moving users on a ride
-# Usage: python ghost_rider.py [username_base] [password] [ride_code] [count]
+# ------------------------------------------------------------------------------
+# Usage:
+#   python ghost_rider.py [username_base] [password] [ride_code] [count]
+#
+# Arguments:
+#   username_base: The prefix for generated usernames (e.g. 'bot').
+#   password:      The password for all bots.
+#   ride_code:     The 6-character ride code to join.
+#   count:         (Optional) Number of bots to spawn. Default is 1.
+#
+# Helper Command (PowerShell):
+#   python tests/debug_tools/ghost_rider.py swarm_user swarmpass [CODE] 5
+# ------------------------------------------------------------------------------
 
 BASE_URL = "http://127.0.0.1:8000"
 
@@ -84,29 +96,20 @@ async def run_single_ghost(index, username, password, ride_code):
             lat = 48.1351 + random.uniform(-0.005, 0.005)
             lon = 11.5820 + random.uniform(-0.005, 0.005)
             
-            # Random movement vector
-            d_lat = random.uniform(-0.0002, 0.0002)
-            d_lon = random.uniform(-0.0002, 0.0002)
+            # Send INITIAL location (so they appear on map)
+            payload = {
+                "ride_code": ride_code,
+                "user_id": user_id,
+                "latitude": lat,
+                "longitude": lon,
+                "location_timestamp": None # Let server/client timestamp it
+            }
+            await sio.emit("update_location", payload) # Send once
+            print(f"[{username}] Spawned at {lat:.4f}, {lon:.4f} (IDLE)")
 
+            # IDLE LOOP: Just stay connected
             while True:
-                # Move
-                lat += d_lat + random.uniform(-0.00005, 0.00005)
-                lon += d_lon + random.uniform(-0.00005, 0.00005)
-                
-                # Keep within bounds (optional, simple bounce)
-                if abs(lat - 48.1351) > 0.02: d_lat *= -1
-                if abs(lon - 11.5820) > 0.02: d_lon *= -1
-
-                payload = {
-                    "ride_code": ride_code,
-                    "user_id": user_id,
-                    "latitude": lat,
-                    "longitude": lon
-                }
-                
-                await sio.emit("update_location", payload)
-                # print(f"[{username}] Sent update") # Too noisy
-                await asyncio.sleep(2 + random.uniform(0, 1))
+                await asyncio.sleep(10) # Just heartbeat/keepalive
 
         except asyncio.CancelledError:
             print(f"[{username}] Stopping...")
