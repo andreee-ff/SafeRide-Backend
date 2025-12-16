@@ -1,12 +1,8 @@
 import socketio
 from datetime import datetime
-# Circular imports removed for MVP
-# from app.injections import get_participation_repository, get_ride_repository
-# from app.repositories import ParticipationRepository, RideRepository
-# from app.database import SessionLocal
 
-# Create a Socket.IO server
-# async_mode='asgi' is crucial for integration with FastAPI
+from app.services import LocationService
+
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 
 @sio.event
@@ -26,16 +22,24 @@ async def join_ride(sid, data):
     ride_code = data.get('ride_code')
     if not ride_code:
         return
+
+    # Validate ride
+    exist = await LocationService.validate_ride(ride_code=ride_code)
+    if not exist:
+        await sio.emit('error', {'msg': f'Ride {ride_code} not found'}, room=sid)
+        return  
     
-    # In a real app, we might validate the code exists here, 
-    # but for speed, we just join the room named by the code.
+    # Join ride room
     await sio.enter_room(sid, ride_code)
-    # print(f"Client {sid} joined room {ride_code}")
     await sio.emit('message', {'msg': f'Joined ride {ride_code}'}, room=sid)
 
 @sio.event
 async def update_location(sid, data):
     """
+    1. Validate input
+    2. Broadcast to room (FAST!)
+    3. Save to DB (ASYNC BACKGROUND)
+    
     Client sends new GPS coordinates.
     data: {
         'ride_code': 'ABC123',
@@ -46,31 +50,36 @@ async def update_location(sid, data):
     """
     ride_code = data.get('ride_code')
     user_id = data.get('user_id')
-    lat = data.get('latitude')
-    lng = data.get('longitude')
-    timestamp = data.get('location_timestamp') or datetime.utcnow().isoformat()
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+    location_timestamp = data.get('location_timestamp')
     
-    if not (ride_code and user_id and lat and lng):
+    if not (ride_code and user_id and latitude and longitude):
         return
 
-    # Broadcast to everyone in the room EXCEPT sender
-    # We send the full participant-like object so frontend updates map effortlessly
-    
-    # NOTE: In a perfect world, we'd save to DB here asynchronously.
-    # For now, we trust the frontend also calls the API or we do it here.
-    # To keeps things fast and simple as requested "like the Flask example":
-    
-    # 2. Broadcast
-    # We broadcast to the room corresponding to the ride_code
+    if not location_timestamp:
+        location_timestamp = datetime.utcnow().isoformat()
+
+    # 1. BROADCAST 
+    await sio.emit('location_update', {
+        'User_id': user_id,
+        'latitude': latitude,
+        'longitude': longitude,
+        'location_timestamp': location_timestamp
+    }, room=ride_code)
+
+    # 2. Save to DB (async background)
     try:
-        await sio.emit('location_update', {
-            'user_id': user_id,
-            'latitude': lat,
-            'longitude': lng,
-            'location_timestamp': timestamp
-        }, room=ride_code)
-        
+        await LocationService.process_location_update(
+            user_id=user_id,
+            ride_code=ride_code,
+            latitude=latitude,
+            longitude=longitude,
+            location_timestamp=location_timestamp
+        )
+    except ValueError as e:
+        print(f"Error processing location update: {e}")
+        await sio.emit('error', {'msg': str(e)}, room=sid)
+    
     except Exception as e:
-        print(f"Error in socket update: {e}")
-    # finally:
-    #    db.close()
+        print(f"Unexpected error: {e}")

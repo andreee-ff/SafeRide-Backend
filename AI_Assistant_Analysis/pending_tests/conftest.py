@@ -1,7 +1,7 @@
-from collections.abc import Generator, Callable
-
+import pytest
+import pytest_asyncio
+from collections.abc import AsyncGenerator
 from datetime import datetime, timezone
-import secrets, string
 import os
 import sys
 
@@ -9,56 +9,63 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from fastapi import FastAPI, status
-from fastapi.testclient import TestClient
-from pytest import fixture
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from httpx import AsyncClient, ASGITransport
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.pool import NullPool
 
 from app.injections import get_session
 from app.main import create_app
-from app.models import DbModel, UserModel, RideModel, ParticipationModel
+from app.models import DbModel, UserModel, RideModel
 
-@fixture(scope="function")
-def app() -> FastAPI:
-    # Ensure tests use SQLite, overriding any local .env configuration
-    db_path = os.path.join(os.path.dirname(__file__), "pending_tests.db")
-    os.environ["DATABASE_URL"] = f"sqlite:///{db_path}"
+# Use a separate file DB for pending tests (async driver)
+DB_PATH = os.path.join(os.path.dirname(__file__), "pending_tests.db")
+TEST_DATABASE_URL = f"sqlite+aiosqlite:///{DB_PATH}"
+
+@pytest_asyncio.fixture(scope="function")
+async def app() -> FastAPI:
     application = create_app()
     if hasattr(application, "other_asgi_app"):
-         return application.other_asgi_app
+        return application.other_asgi_app
     return application
 
-@fixture(scope="function")
-def session(app: FastAPI) -> Generator[Session]:
-    # Use a separate DB for pending tests
-    db_path = os.path.join(os.path.dirname(__file__), "pending_tests.db")
-    engine = create_engine(f"sqlite:///{db_path}")
-    DbModel.metadata.create_all(bind=engine)
-    try:
-        session = Session(bind=engine)
-        try:
-            app.dependency_overrides[get_session] = lambda: session
-            yield session
-        finally:
-            session.close()
-    finally:
-        DbModel.metadata.drop_all(engine)
-        engine.dispose()
+@pytest_asyncio.fixture(scope="function")
+async def session() -> AsyncGenerator[AsyncSession, None]:
+    engine = create_async_engine(TEST_DATABASE_URL, poolclass=NullPool)
+    
+    async with engine.begin() as conn:
+        await conn.run_sync(DbModel.metadata.drop_all)
+        await conn.run_sync(DbModel.metadata.create_all)
 
-@fixture(scope="function")
-def test_client(app: FastAPI, session: Session) -> Generator[TestClient]:
-    with TestClient(app=app) as test_client:
-        yield test_client
+    TestingSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
 
-@fixture(scope="function")
-def test_user(session: Session) -> UserModel:
+    async with TestingSessionLocal() as session:
+        yield session
+        await session.rollback()
+    
+    await engine.dispose()
+
+@pytest_asyncio.fixture(scope="function")
+async def test_client(app: FastAPI, session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
+    async def override_get_session():
+        yield session
+
+    app.dependency_overrides[get_session] = override_get_session
+    
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        yield ac
+    
+    app.dependency_overrides.clear()
+
+@pytest_asyncio.fixture(scope="function")
+async def test_user(session: AsyncSession) -> UserModel:
     user = UserModel(username="testuser", password="testpassword")
     session.add(user)
-    session.flush()
+    await session.commit()
+    await session.refresh(user)
     return user
 
-@fixture(scope="function")
-def test_ride(session: Session, test_user: UserModel) -> RideModel:
+@pytest_asyncio.fixture(scope="function")
+async def test_ride(session: AsyncSession, test_user: UserModel) -> RideModel:
     ride = RideModel(
         code="ABC123",
         title="Test Ride",
@@ -67,21 +74,22 @@ def test_ride(session: Session, test_user: UserModel) -> RideModel:
         created_by_user_id=test_user.id,
     )
     session.add(ride)
-    session.flush()
+    await session.commit()
+    await session.refresh(ride)
     return ride
 
-@fixture(scope="function")
-def auth_headers(test_client: TestClient, session: Session,) -> dict[str, str]:
+@pytest_asyncio.fixture(scope="function")
+async def auth_headers(test_client: AsyncClient, session: AsyncSession) -> dict[str, str]:
     user = UserModel(username="auth_user", password="authpassword")
     session.add(user)
-    session.flush()
+    await session.commit()
 
     login_payload = {
-        "username": user.username,
-        "password": user.password,
+        "username": "auth_user",
+        "password": "authpassword",
     }
-    login_response = test_client.post("/auth/login", data=login_payload)
-    assert login_response.status_code == status.HTTP_200_OK, login_response.text
-
-    access_token = login_response.json()["access_token"]
-    return {"Authorization": f"Bearer {access_token}"}
+    response = await test_client.post("/auth/login", data=login_payload)
+    assert response.status_code == status.HTTP_200_OK
+    
+    token = response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}

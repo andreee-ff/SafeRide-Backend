@@ -19,7 +19,7 @@ router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-def get_current_user(
+async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],  
 ) -> UserResponse:
@@ -38,7 +38,7 @@ def get_current_user(
             detail="Invalid token",
         )
         
-    user = user_repository.get_by_id(user_id=user_id)
+    user = await user_repository.get_by_id(user_id=user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

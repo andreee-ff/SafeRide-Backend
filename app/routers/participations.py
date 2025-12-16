@@ -30,14 +30,14 @@ router = APIRouter()
         response_model=List[ParticipationResponse],
         status_code=status.HTTP_200_OK,
 )
-def get_list_participations(
+async def get_list_participations(
     participation_repository: Annotated[
         ParticipationRepository,
         Depends(get_participation_repository),
         ]
 ) -> List[ParticipationResponse]:
     
-    participations = participation_repository.get_all_participations()
+    participations = await participation_repository.get_all_participations()
     return [ParticipationResponse.model_validate(r) for r in participations]
 
 
@@ -47,7 +47,7 @@ def get_list_participations(
         status_code=status.HTTP_200_OK,
         responses={status.HTTP_404_NOT_FOUND: {}},
 )
-def get_participation_by_id(
+async def get_participation_by_id(
         id: int,
         participation_repository: Annotated[
             ParticipationRepository, 
@@ -55,7 +55,7 @@ def get_participation_by_id(
         ],
 ) -> ParticipationResponse:
 
-    participation = participation_repository.get_by_id(participation_id=id)
+    participation = await participation_repository.get_by_id(participation_id=id)
     if not participation:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return ParticipationResponse.model_validate(participation)
@@ -70,18 +70,18 @@ def get_participation_by_id(
     status_code=status.HTTP_201_CREATED,
     responses={status.HTTP_422_UNPROCESSABLE_CONTENT: {}},
 )
-def create_participation(
+async def create_participation(
     participation_to_create: ParticipationCreate,
     participation_repository: Annotated[ParticipationRepository, Depends(get_participation_repository)],
     ride_repository: Annotated[RideRepository, Depends(get_ride_repository)],
     current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> ParticipationResponse:
-    current_ride = ride_repository.get_by_code(ride_code = participation_to_create.ride_code)
+    current_ride = await ride_repository.get_by_code(ride_code = participation_to_create.ride_code)
     if not current_ride:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND)
     
-    try:
-        participation_model = participation_repository.create_participation(
+    try:    
+        participation_model = await participation_repository.create_participation(
             user_id = current_user.id,
             ride_id = current_ride.id,
         )
@@ -104,7 +104,7 @@ def create_participation(
         status.HTTP_403_FORBIDDEN: {},
     },
 )
-def update_participation_by_id(
+async def update_participation_by_id(
     id: int,
     participation_to_update: ParticipationUpdate,
     participation_repository: Annotated[
@@ -117,7 +117,7 @@ def update_participation_by_id(
     ],
 ) -> ParticipationResponse:
     
-    existing_participation = participation_repository.get_by_id(participation_id=id)
+    existing_participation = await participation_repository.get_by_id(participation_id=id)
     if not existing_participation:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND)
     
@@ -128,7 +128,7 @@ def update_participation_by_id(
             detail="Not allowed to update this participation. It belongs to another user",
             )
     
-    participation_model = participation_repository.update_participation(
+    participation_model = await participation_repository.update_participation(
         existing_participation,
         latitude = participation_to_update.latitude,
         longitude = participation_to_update.longitude,
@@ -149,7 +149,7 @@ def update_participation_by_id(
     },
 )
 
-def delete_patticipation_by_id(
+async def delete_patticipation_by_id(
     id: int,
     participation_repository: Annotated[
         ParticipationRepository,
@@ -160,7 +160,7 @@ def delete_patticipation_by_id(
         Depends(get_current_user),
     ],
 ) -> None:
-    selected_participation = participation_repository.get_by_id(participation_id=id)
+    selected_participation = await participation_repository.get_by_id(participation_id=id)
     if not selected_participation:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND)
 
@@ -170,5 +170,5 @@ def delete_patticipation_by_id(
             detail="Not allowed to delete this participation. It belongs to another user",
         )
 
-    participation_repository.delete_participation(participation = selected_participation)
+    await participation_repository.delete_participation(participation = selected_participation)
     return

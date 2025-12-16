@@ -1,19 +1,22 @@
 from unittest.mock import ANY
 
+import pytest
+
 from fastapi import status
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from datetime import datetime, timezone
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import RideModel, UserModel
 from app.repositories import RideRepository
 from tests.conftest import RideFactoryType
 
-def test_create_ride_success(
-    test_client: TestClient, 
-    session: Session,
+@pytest.mark.asyncio
+async def test_create_ride_success(
+    test_client: AsyncClient, 
+    session: AsyncSession,
     auth_headers: dict[str, str],
  ):
     start_time = datetime(
@@ -29,7 +32,7 @@ def test_create_ride_success(
         "description": "Ride_description",
         "start_time": start_time,
     }
-    response = test_client.post("/rides/", json=payload, headers=auth_headers)
+    response = await test_client.post("/rides/", json=payload, headers=auth_headers)
 
     assert response.status_code == status.HTTP_201_CREATED, response.text
     data = response.json()
@@ -45,21 +48,24 @@ def test_create_ride_success(
     assert isinstance(data["created_at"], str)
     assert isinstance(data["updated_at"], str)
     assert data["is_active"] is True
-    assert (
-        session.execute(
-            select(RideModel).filter(RideModel.id == data["id"])
-        ).first()
-        is not None
-    )
 
-def test_get_all_rides_success(
-        test_client: TestClient,
+    result = await session.execute(
+            select(RideModel).filter(RideModel.id == data["id"])
+        )
+    assert result.first() is not None
+
+@pytest.mark.asyncio
+async def test_get_all_rides_success(
+        test_client: AsyncClient,
         ride_factory: RideFactoryType,
 ):
     count_ride = 3
-    created_rides = [ride_factory() for _ in range(count_ride)]
+    created_rides = []
+    for _ in range(count_ride):
+        ride = await ride_factory()
+        created_rides.append(ride)
 
-    response = test_client.get("/rides/")
+    response = await test_client.get("/rides/")
     assert response.status_code == status.HTTP_200_OK
     
     data_response = response.json()
@@ -70,9 +76,9 @@ def test_get_all_rides_success(
     expected_codes = {ride.code for ride in created_rides}
     assert returned_codes == expected_codes
 
-
-def test_get_ride_by_code_success(
-        test_client: TestClient,
+@pytest.mark.asyncio
+async def test_get_ride_by_code_success(
+        test_client: AsyncClient,
         test_ride: RideModel,
 ):
     expected_response = {
@@ -87,13 +93,14 @@ def test_get_ride_by_code_success(
         "is_active": ANY,
     }
 
-    response = test_client.get(f"/rides/code/{test_ride.code}")
+    response = await test_client.get(f"/rides/code/{test_ride.code}")
 
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json() == expected_response
 
-def test_get_ride_by_id_success(
-        test_client: TestClient,
+@pytest.mark.asyncio
+async def test_get_ride_by_id_success(
+        test_client: AsyncClient,
         test_ride: RideModel,
 ):
     expected_response = {
@@ -108,23 +115,24 @@ def test_get_ride_by_id_success(
         "is_active": ANY,
     }
 
-    response = test_client.get(f"/rides/{test_ride.id}")
+    response = await test_client.get(f"/rides/{test_ride.id}")
 
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json() == expected_response
 
-def test_delete_ride_by_id_success(
-        test_client: TestClient,
+@pytest.mark.asyncio
+async def test_delete_ride_by_id_success(
+        test_client: AsyncClient,
         test_ride: RideModel,
         auth_headers: dict[str, str],
-        session: Session
+        session: AsyncSession
 ):
     payload ={
         "title": test_ride.title,
         "description": test_ride.description,
         "start_time": test_ride.start_time.isoformat()
     }
-    create_response = test_client.post(
+    create_response = await test_client.post(
         "/rides/",
         json=payload,
         headers=auth_headers,
@@ -136,7 +144,7 @@ def test_delete_ride_by_id_success(
 
     ride_id_to_delete = create_response.json()["id"]
 
-    delete_respose = test_client.delete(
+    delete_respose = await test_client.delete(
         f"/rides/{ride_id_to_delete}",
         headers=auth_headers,
         )
@@ -146,11 +154,14 @@ def test_delete_ride_by_id_success(
         f"Server response: {delete_respose.text}"
     ) 
 
-    deleted_in_db = session.get(RideModel, ride_id_to_delete)
+    session.expire_all()
+    result = await session.execute(select(RideModel).where(RideModel.id == ride_id_to_delete))
+    deleted_in_db = result.scalar_one_or_none()
     assert deleted_in_db is None
 
-def test_edit_ride_by_id_success(
-        test_client: TestClient,
+@pytest.mark.asyncio
+async def test_edit_ride_by_id_success(
+        test_client: AsyncClient,
         test_ride: RideModel,
         auth_headers: dict[str|str],
 ):
@@ -160,7 +171,7 @@ def test_edit_ride_by_id_success(
         "start_time": test_ride.start_time.isoformat()
     }
 
-    create_response = test_client.post(
+    create_response = await test_client.post(
         "/rides/",
         json=create_payload,
         headers=auth_headers,
@@ -179,8 +190,8 @@ def test_edit_ride_by_id_success(
         "is_active": False
     }
     
-    put_response = test_client.put(
-        f"/rides/{created_ride["id"]}",
+    put_response = await test_client.put(
+        f"/rides/{created_ride['id']}",
         json=update_payload,
         headers=auth_headers,
     )
@@ -200,11 +211,12 @@ def test_edit_ride_by_id_success(
     }
     assert response_data == expected_response
     
-def test_update_ride_updates_only_given_fields_without_api(session: Session):
+@pytest.mark.asyncio
+async def test_update_ride_updates_only_given_fields_without_api(session: AsyncSession):
 
     user = UserModel(username="creator", password="pass")
     session.add(user)
-    session.flush()
+    await session.commit()
 
     ride_repository = RideRepository(session=session)
 
@@ -217,14 +229,14 @@ def test_update_ride_updates_only_given_fields_without_api(session: Session):
     )
 
     session.add(old_ride)
-    session.flush()
+    await session.commit()
 
     ride_to_update = {
         "title" : "New unit title",
         "is_active" : False,
     }
 
-    updated_ride = ride_repository.update_ride(
+    updated_ride = await ride_repository.update_ride(
         old_ride,
         title=ride_to_update["title"],
         is_active=ride_to_update["is_active"],
@@ -237,16 +249,16 @@ def test_update_ride_updates_only_given_fields_without_api(session: Session):
     assert updated_ride.description == old_ride.description
     assert updated_ride.start_time == old_ride.start_time
 
-    db_ride = session.get(RideModel, old_ride.id)
+    db_ride = await session.get(RideModel, old_ride.id)
     assert db_ride is not None
     assert db_ride.title == ride_to_update["title"]
     assert db_ride.is_active == ride_to_update["is_active"]
 
-
-def test_get_all_rides_return_empty_list_when_none_exsist(
-        test_client: TestClient,
+@pytest.mark.asyncio
+async def test_get_all_rides_return_empty_list_when_none_exsist(
+        test_client: AsyncClient,
 ):
-    response = test_client.get(f"/rides/")
+    response = await test_client.get(f"/rides/")
     assert response.status_code == status.HTTP_200_OK
 
     assert response.json() == []

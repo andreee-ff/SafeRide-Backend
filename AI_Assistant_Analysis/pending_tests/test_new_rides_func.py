@@ -1,12 +1,13 @@
 from fastapi import status
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from datetime import datetime, timezone
-
+import pytest
 from app.models import RideModel
 
 
-def test_get_owned_rides_success(
-    test_client: TestClient,
+@pytest.mark.asyncio
+async def test_get_owned_rides_success(
+    test_client: AsyncClient,
     auth_headers: dict[str, str],
 ):
     # 1. Create a ride
@@ -18,14 +19,14 @@ def test_get_owned_rides_success(
         "description": "My owned ride",
         "start_time": start_time,
     }
-    create_response = test_client.post(
+    create_response = await test_client.post(
         "/rides/", json=payload, headers=auth_headers
     )
     assert create_response.status_code == status.HTTP_201_CREATED
     ride_id = create_response.json()["id"]
 
     # 2. Fetch owned rides
-    response = test_client.get("/rides/owned", headers=auth_headers)
+    response = await test_client.get("/rides/owned", headers=auth_headers)
     assert response.status_code == status.HTTP_200_OK
 
     data = response.json()
@@ -42,20 +43,21 @@ def test_get_owned_rides_success(
     assert found
 
 
-def test_get_joined_rides_success(
-    test_client: TestClient,
+@pytest.mark.asyncio
+async def test_get_joined_rides_success(
+    test_client: AsyncClient,
     test_ride: RideModel,  # Made by some other user (factory)
     auth_headers: dict[str, str],  # Our current test user
 ):
     # 1. Join the ride
     join_payload = {"ride_code": test_ride.code}
-    join_response = test_client.post(
+    join_response = await test_client.post(
         "/participations/", json=join_payload, headers=auth_headers
     )
     assert join_response.status_code == status.HTTP_201_CREATED
 
     # 2. Fetch joined rides
-    response = test_client.get("/rides/joined", headers=auth_headers)
+    response = await test_client.get("/rides/joined", headers=auth_headers)
     assert response.status_code == status.HTTP_200_OK
 
     data = response.json()

@@ -5,11 +5,11 @@ Tests retrieving participant list with user information
 import pytest
 from datetime import datetime, timezone, timedelta
 
-
+@pytest.mark.asyncio
 class TestRideParticipantsEndpoint:
     """Test GET /rides/{ride_id}/participants endpoint"""
     
-    def test_get_participants_empty_list(self, client, auth_headers):
+    async def test_get_participants_empty_list(self, client, auth_headers):
         """Test getting participants for a ride with no participants"""
         # Create a ride
         ride_data = {
@@ -17,17 +17,19 @@ class TestRideParticipantsEndpoint:
             "description": "No participants yet",
             "start_time": (datetime.now() + timedelta(hours=2)).isoformat()
         }
-        ride_response = client.post("/rides/", json=ride_data, headers=auth_headers)
+        ride_response = await client.post("/rides/", json=ride_data, headers=auth_headers)
         ride_id = ride_response.json()["id"]
         
         # Get participants
-        response = client.get(f"/rides/{ride_id}/participants")
+        response = await client.get(f"/rides/{ride_id}/participants")
         
         assert response.status_code == 200
         data = response.json()
-        assert data == []
+        # Creator is automatically added as participant
+        assert len(data) == 1
+        assert data[0]["username"] == "testuser"
     
-    def test_get_participants_single_user(self, client, auth_headers):
+    async def test_get_participants_single_user(self, client, auth_headers):
         """Test getting participants when one user has joined"""
         # Create a ride
         ride_data = {
@@ -35,16 +37,15 @@ class TestRideParticipantsEndpoint:
             "description": "One person joining",
             "start_time": (datetime.now() + timedelta(hours=2)).isoformat()
         }
-        ride_response = client.post("/rides/", json=ride_data, headers=auth_headers)
+        ride_response = await client.post("/rides/", json=ride_data, headers=auth_headers)
         ride_code = ride_response.json()["code"]
         ride_id = ride_response.json()["id"]
         
-        # Join the ride
-        participation_data = {"ride_code": ride_code}
-        client.post("/participations/", json=participation_data, headers=auth_headers)
+        # Ride creator is already a participant
+        # No need to join again
         
         # Get participants
-        response = client.get(f"/rides/{ride_id}/participants")
+        response = await client.get(f"/rides/{ride_id}/participants")
         
         assert response.status_code == 200
         data = response.json()
@@ -59,7 +60,7 @@ class TestRideParticipantsEndpoint:
         assert participant["longitude"] is None
         assert participant["location_timestamp"] is None
     
-    def test_get_participants_multiple_users(self, client, auth_headers, second_user_headers):
+    async def test_get_participants_multiple_users(self, client, auth_headers, second_user_headers):
         """Test getting participants when multiple users have joined"""
         # Create a ride
         ride_data = {
@@ -67,17 +68,18 @@ class TestRideParticipantsEndpoint:
             "description": "Multiple people joining",
             "start_time": (datetime.now() + timedelta(hours=3)).isoformat()
         }
-        ride_response = client.post("/rides/", json=ride_data, headers=auth_headers)
+        ride_response = await client.post("/rides/", json=ride_data, headers=auth_headers)
         ride_code = ride_response.json()["code"]
         ride_id = ride_response.json()["id"]
         
-        # Both users join
+        # Creator (User 1) is already joined
+        
+        # User 2 joins
         participation_data = {"ride_code": ride_code}
-        client.post("/participations/", json=participation_data, headers=auth_headers)
-        client.post("/participations/", json=participation_data, headers=second_user_headers)
+        await client.post("/participations/", json=participation_data, headers=second_user_headers)
         
         # Get participants
-        response = client.get(f"/rides/{ride_id}/participants")
+        response = await client.get(f"/rides/{ride_id}/participants")
         
         assert response.status_code == 200
         data = response.json()
@@ -88,7 +90,7 @@ class TestRideParticipantsEndpoint:
         assert len(usernames) == 2
         assert all(isinstance(username, str) for username in usernames)
     
-    def test_get_participants_with_location_data(self, client, auth_headers):
+    async def test_get_participants_with_location_data(self, client, auth_headers):
         """Test getting participants with GPS location data"""
         # Create ride and join
         ride_data = {
@@ -96,13 +98,13 @@ class TestRideParticipantsEndpoint:
             "description": "Test with GPS",
             "start_time": (datetime.now() + timedelta(hours=2)).isoformat()
         }
-        ride_response = client.post("/rides/", json=ride_data, headers=auth_headers)
+        ride_response = await client.post("/rides/", json=ride_data, headers=auth_headers)
         ride_code = ride_response.json()["code"]
         ride_id = ride_response.json()["id"]
         
-        participation_data = {"ride_code": ride_code}
-        participation_response = client.post("/participations/", json=participation_data, headers=auth_headers)
-        participation_id = participation_response.json()["id"]
+        # Check participation of creator
+        participants = await client.get(f"/rides/{ride_id}/participants")
+        participation_id = participants.json()[0]["id"]
         
         # Update location
         location_data = {
@@ -110,10 +112,10 @@ class TestRideParticipantsEndpoint:
             "longitude": 37.6173,
             "location_timestamp": (datetime.now(timezone.utc) - timedelta(seconds=30)).isoformat()
         }
-        client.put(f"/participations/{participation_id}", json=location_data, headers=auth_headers)
+        await client.put(f"/participations/{participation_id}", json=location_data, headers=auth_headers)
         
         # Get participants
-        response = client.get(f"/rides/{ride_id}/participants")
+        response = await client.get(f"/rides/{ride_id}/participants")
         
         assert response.status_code == 200
         data = response.json()
@@ -124,7 +126,7 @@ class TestRideParticipantsEndpoint:
         assert participant["longitude"] == 37.6173
         assert participant["location_timestamp"] is not None
     
-    def test_get_participants_includes_username(self, client, auth_headers):
+    async def test_get_participants_includes_username(self, client, auth_headers):
         """Test that participant response includes username from user table"""
         # Create ride
         ride_data = {
@@ -132,41 +134,39 @@ class TestRideParticipantsEndpoint:
             "description": "Test username inclusion",
             "start_time": (datetime.now() + timedelta(hours=2)).isoformat()
         }
-        ride_response = client.post("/rides/", json=ride_data, headers=auth_headers)
+        ride_response = await client.post("/rides/", json=ride_data, headers=auth_headers)
         ride_code = ride_response.json()["code"]
         ride_id = ride_response.json()["id"]
         
-        # Join ride
-        participation_data = {"ride_code": ride_code}
-        client.post("/participations/", json=participation_data, headers=auth_headers)
+        # Creator is already joined
         
         # Get current user info
-        user_response = client.get("/auth/me", headers=auth_headers)
+        user_response = await client.get("/auth/me", headers=auth_headers)
         current_username = user_response.json()["username"]
         
         # Get participants
-        response = client.get(f"/rides/{ride_id}/participants")
+        response = await client.get(f"/rides/{ride_id}/participants")
         
         assert response.status_code == 200
         data = response.json()
         participant = data[0]
         assert participant["username"] == current_username
     
-    def test_get_participants_nonexistent_ride(self, client):
+    async def test_get_participants_nonexistent_ride(self, client):
         """Test getting participants for a ride that doesn't exist"""
-        response = client.get("/rides/99999/participants")
+        response = await client.get("/rides/99999/participants")
         
         assert response.status_code == 200
         data = response.json()
         assert data == []
     
-    def test_get_participants_invalid_ride_id(self, client):
+    async def test_get_participants_invalid_ride_id(self, client):
         """Test getting participants with invalid ride ID format"""
-        response = client.get("/rides/invalid/participants")
+        response = await client.get("/rides/invalid/participants")
         
         assert response.status_code == 422
     
-    def test_get_participants_field_types(self, client, auth_headers):
+    async def test_get_participants_field_types(self, client, auth_headers):
         """Test that all fields have correct types in response"""
         # Create ride and join
         ride_data = {
@@ -174,13 +174,13 @@ class TestRideParticipantsEndpoint:
             "description": "Test field types",
             "start_time": (datetime.now() + timedelta(hours=2)).isoformat()
         }
-        ride_response = client.post("/rides/", json=ride_data, headers=auth_headers)
+        ride_response = await client.post("/rides/", json=ride_data, headers=auth_headers)
         ride_code = ride_response.json()["code"]
         ride_id = ride_response.json()["id"]
         
-        participation_data = {"ride_code": ride_code}
-        participation_response = client.post("/participations/", json=participation_data, headers=auth_headers)
-        participation_id = participation_response.json()["id"]
+        # Check creator participation
+        participants = await client.get(f"/rides/{ride_id}/participants")
+        participation_id = participants.json()[0]["id"]
         
         # Update with location
         location_data = {
@@ -188,10 +188,10 @@ class TestRideParticipantsEndpoint:
             "longitude": 11.5820,
             "location_timestamp": datetime.now(timezone.utc).isoformat()
         }
-        client.put(f"/participations/{participation_id}", json=location_data, headers=auth_headers)
+        await client.put(f"/participations/{participation_id}", json=location_data, headers=auth_headers)
         
         # Get participants
-        response = client.get(f"/rides/{ride_id}/participants")
+        response = await client.get(f"/rides/{ride_id}/participants")
         
         assert response.status_code == 200
         participant = response.json()[0]
@@ -205,7 +205,7 @@ class TestRideParticipantsEndpoint:
         assert isinstance(participant["longitude"], float)
         assert isinstance(participant["location_timestamp"], str)  # ISO datetime string
     
-    def test_get_participants_joined_at_timestamp(self, client, auth_headers):
+    async def test_get_participants_joined_at_timestamp(self, client, auth_headers):
         """Test that joined_at field contains valid timestamp"""
         # Create ride and join
         ride_data = {
@@ -213,15 +213,14 @@ class TestRideParticipantsEndpoint:
             "description": "Test joined_at",
             "start_time": (datetime.now() + timedelta(hours=2)).isoformat()
         }
-        ride_response = client.post("/rides/", json=ride_data, headers=auth_headers)
+        ride_response = await client.post("/rides/", json=ride_data, headers=auth_headers)
         ride_code = ride_response.json()["code"]
         ride_id = ride_response.json()["id"]
         
-        participation_data = {"ride_code": ride_code}
-        client.post("/participations/", json=participation_data, headers=auth_headers)
+        # Creator is already participant
         
         # Get participants
-        response = client.get(f"/rides/{ride_id}/participants")
+        response = await client.get(f"/rides/{ride_id}/participants")
         
         participant = response.json()[0]
         

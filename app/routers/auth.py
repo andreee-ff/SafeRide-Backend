@@ -27,11 +27,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
     response_model=TokenResponse,
     responses={status.HTTP_401_UNAUTHORIZED: {}},    
 )
-def login(
+async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
 ) -> TokenResponse:
-    user = user_repository.get_by_username(username=form_data.username)
+    user = await user_repository.get_by_username(username=form_data.username)
     if not user or user.password != form_data.password:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -51,6 +51,6 @@ def login(
     response_model=UserResponse,
     responses={status.HTTP_401_UNAUTHORIZED: {}},
 )
-def get_me(current_user: Annotated[UserResponse, Depends(get_current_user)],
+async def get_me(current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> UserResponse:
     return current_user

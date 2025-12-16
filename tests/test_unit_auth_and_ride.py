@@ -1,13 +1,15 @@
 from datetime import datetime, timezone
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, AsyncMock
+import pytest
 
 from app.models import UserModel, RideModel
 from app.repositories import RideRepository
 import app.security as security
 
 
-def test_unit_update_ride_in_riderepository(mocker):
-    mock_session = mocker.MagicMock()
+@pytest.mark.asyncio
+async def test_unit_update_ride_in_riderepository():
+    mock_session = AsyncMock()
     ride_repository =RideRepository(session=mock_session)
 
     old_ride = RideModel(
@@ -23,7 +25,7 @@ def test_unit_update_ride_in_riderepository(mocker):
         "is_active" : False,
     }
 
-    updated_ride = ride_repository.update_ride(
+    updated_ride = await ride_repository.update_ride(
         old_ride,
         title=ride_to_update["title"],
         is_active=ride_to_update["is_active"],
@@ -37,10 +39,12 @@ def test_unit_update_ride_in_riderepository(mocker):
     assert updated_ride.start_time == old_ride.start_time
 
     mock_session.add.assert_called_once_with (updated_ride)
-    mock_session.flush.assert_called_once()
+
+    mock_session.flush.assert_awaited_once()
+    mock_session.refresh.assert_awaited_once_with(updated_ride)
 
 
-def test_unit_create_and_decode_access_token(mocker):
+def test_unit_create_and_decode_access_token():
     security.SECRET_KEY = "unit-secret-key"
     security.ALGORITHM = "HS256"
     security.ACCESS_TOKEN_EXPIRE_MINUTES = 15

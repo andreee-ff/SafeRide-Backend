@@ -25,18 +25,18 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
     responses={status.HTTP_409_CONFLICT: {}},
 )
-def create_user(
+async def create_user(
     user_to_create: UserCreate,
     user_repository: Annotated[
         UserRepository, Depends(get_user_repository)
     ],
 ) -> UserResponse:
-    existing_user = user_repository.get_by_username(username=user_to_create.username)
+    existing_user = await user_repository.get_by_username(username=user_to_create.username)
     if existing_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT)
 
     try:
-        user_model = user_repository.create_user(
+        user_model = await user_repository.create_user(
             username=user_to_create.username, password=user_to_create.password
         )   
         return UserResponse.model_validate(user_model)
@@ -48,13 +48,13 @@ def create_user(
     response_model=UserResponse,
     responses={status.HTTP_404_NOT_FOUND: {}},
 )
-def get_user(
+async def get_user(
     id: int,
     user_repository: Annotated[
         UserRepository, Depends(get_user_repository)
     ],
 ) -> UserResponse:
-    user = user_repository.get_by_id(user_id=id)
+    user = await user_repository.get_by_id(user_id=id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return UserResponse.model_validate(user)
@@ -64,10 +64,10 @@ def get_user(
     response_model=List[UserResponse],
     status_code=status.HTTP_200_OK
 )
-def get_list_users(
+async def get_list_users(
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
 ) -> List[UserResponse]:
     
-    users = user_repository.get_all_users()
+    users = await user_repository.get_all_users()
     return [UserResponse.model_validate(user) for user in users]
 

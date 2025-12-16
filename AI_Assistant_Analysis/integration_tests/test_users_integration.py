@@ -4,18 +4,18 @@ Tests real database operations without mocking
 """
 import pytest
 
-
+@pytest.mark.asyncio
 class TestUserEndpoints:
     """Test user creation and retrieval with real database"""
     
-    def test_create_user(self, client):
+    async def test_create_user(self, client):
         """Test creating a new user in database"""
         user_data = {
             "username": "john_doe",
             "password": "securepass123"
         }
         
-        response = client.post("/users/", json=user_data)
+        response = await client.post("/users/", json=user_data)
         
         assert response.status_code == 201
         data = response.json()
@@ -23,7 +23,7 @@ class TestUserEndpoints:
         assert "id" in data
         assert "password" not in data  # Password should not be returned
     
-    def test_create_duplicate_username(self, client):
+    async def test_create_duplicate_username(self, client):
         """Test that duplicate usernames are rejected"""
         user_data = {
             "username": "duplicate_user",
@@ -31,14 +31,14 @@ class TestUserEndpoints:
         }
         
         # Create first user
-        response1 = client.post("/users/", json=user_data)
+        response1 = await client.post("/users/", json=user_data)
         assert response1.status_code == 201
         
         # Try to create second user with same username
-        response2 = client.post("/users/", json=user_data)
+        response2 = await client.post("/users/", json=user_data)
         assert response2.status_code == 409
     
-    def test_get_user_by_id(self, client):
+    async def test_get_user_by_id(self, client):
         """Test retrieving user by ID"""
         # Create user
         user_data = {
@@ -46,23 +46,24 @@ class TestUserEndpoints:
             "password": "pass456"
         }
         
-        create_response = client.post("/users/", json=user_data)
+        create_response = await client.post("/users/", json=user_data)
         user_id = create_response.json()["id"]
         
         # Get user by ID
-        response = client.get(f"/users/{user_id}")
+        response = await client.get(f"/users/{user_id}")
         
         assert response.status_code == 200
         data = response.json()
         assert data["id"] == user_id
         assert data["username"] == "jane_doe"
     
-    def test_get_nonexistent_user(self, client):
+    async def test_get_nonexistent_user(self, client):
         """Test getting user that doesn't exist"""
-        response = client.get("/users/99999")
+        # Use await for client.get
+        response = await client.get("/users/99999")
         assert response.status_code == 404
     
-    def test_get_all_users(self, client):
+    async def test_get_all_users(self, client):
         """Test retrieving all users"""
         # Create multiple users
         users = [
@@ -72,11 +73,11 @@ class TestUserEndpoints:
         ]
         
         for user in users:
-            response = client.post("/users/", json=user)
+            response = await client.post("/users/", json=user)
             assert response.status_code == 201
         
         # Get all users
-        response = client.get("/users/")
+        response = await client.get("/users/")
         
         assert response.status_code == 200
         data = response.json()

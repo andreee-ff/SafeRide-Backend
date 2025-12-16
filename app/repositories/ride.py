@@ -1,5 +1,7 @@
 from datetime import datetime
-from sqlalchemy.orm import Session, joinedload
+
+from sqlalchemy.ext.asyncio import AsyncSession 
+from sqlalchemy.orm import  joinedload
 from sqlalchemy import select
 
 from typing import Sequence
@@ -9,25 +11,26 @@ from app.models import ParticipationModel, RideModel
 
 
 class RideRepository:
-    session: Session
+    session: AsyncSession
 
-    def __init__ (self, *, session: Session):
+    def __init__ (self, *, session: AsyncSession):
         self.session = session
 
     def _generate_string_code(self, length: int = 6) -> str:
         characters = string.ascii_uppercase + string.digits
         return ''.join(secrets.choice(characters) for _ in range(length))
     
-    def _generate_unique_code(self) -> str:
+    async def _generate_unique_code(self) -> str:
         while True:
             code = self._generate_string_code()
             statement = select(RideModel).where(RideModel.code == code)
-            existintg_ride = self.session.execute(statement).scalar_one_or_none()
+            result = await self.session.execute(statement)
+            existintg_ride = result.scalar_one_or_none()
 
             if existintg_ride is None:
                 return code
             
-    def create_ride(
+    async def create_ride(
             self,
             *,
             title: str,
@@ -35,7 +38,7 @@ class RideRepository:
             start_time: datetime,
             created_by_user_id: int,
         ) -> RideModel:
-        unique_code = self._generate_unique_code()
+        unique_code = await self._generate_unique_code()
         new_ride = RideModel(
             code=unique_code,
             title=title,
@@ -45,7 +48,8 @@ class RideRepository:
         ) 
 
         self.session.add(new_ride)
-        self.session.flush()
+        await self.session.flush()
+        await self.session.refresh(new_ride)
 
         # Create participation for the creator
         new_participation = ParticipationModel(
@@ -54,57 +58,64 @@ class RideRepository:
         )
 
         self.session.add(new_participation)
-        self.session.flush()    
+        await self.session.flush()    
 
         return new_ride
-    
-    def get_all_rides(self) -> Sequence[RideModel]:
+
+    async def get_all_rides(self) -> Sequence[RideModel]:
         statement = select(RideModel)
-        return(self.session.execute(statement).scalars().all())
+        result = await self.session.execute(statement)
+        return result.scalars().all()
     
-    def get_participants(self, *, ride_id: int) -> Sequence[ParticipationModel]:
+    async def get_participants(self, *, ride_id: int) -> Sequence[ParticipationModel]:
         statement = (
             select(ParticipationModel)
             .options(joinedload(ParticipationModel.participant))
             .where(ParticipationModel.ride_id == ride_id)
         )
-        return self.session.execute(statement).unique().scalars().all()
+        result = await self.session.execute(statement)
+        return result.unique().scalars().all()
  
 
-    def get_by_code(self, *, ride_code: str) -> RideModel | None:
-        statement = select(RideModel).where(RideModel.code == ride_code) 
-        return(self.session.execute(statement).scalar_one_or_none())
+    async def get_by_code(self, *, ride_code: str) -> RideModel | None:
+        statement = select(RideModel).where(RideModel.code == ride_code)
+        result = await self.session.execute(statement)
+        return result.scalar_one_or_none()
     
-    def get_by_id(self, *, ride_id: int) -> RideModel | None:
+    async def get_by_id(self, *, ride_id: int) -> RideModel | None:
         statement = select(RideModel).where(RideModel.id == ride_id)
-        return(self.session.execute(statement).scalar_one_or_none())
+        result = await self.session.execute(statement)
+        return result.scalar_one_or_none()
     
-    def get_owned_rides(self, *, user_id: int) -> list[RideModel]:
+    async def get_owned_rides(self, *, user_id: int) -> Sequence[RideModel]:
         statement = select(RideModel).where(
             RideModel.created_by_user_id == user_id
             ).order_by(RideModel.start_time.asc())
-        return(self.session.execute(statement).scalars().all())
+        result = await self.session.execute(statement)
+        return result.scalars().all()
 
-    def get_joined_rides(self, *, user_id: int) -> list[RideModel]:
+    async def get_joined_rides(self, *, user_id: int) -> Sequence[RideModel]:
         statement = select(RideModel).where(
             RideModel.has_participants.any(
                 ParticipationModel.user_id == user_id
                 )).order_by(RideModel.start_time.asc())
-        return(self.session.execute(statement).scalars().all())
+        result = await self.session.execute(statement)
+        return result.scalars().all()
 
-    def get_available_rides(self, *, user_id: int) -> list[RideModel]:
+    async def get_available_rides(self, *, user_id: int) -> Sequence[RideModel]:
         statement = select(RideModel).where(
             ~RideModel.has_participants.any(
                 ParticipationModel.user_id == user_id
             )
         ).order_by(RideModel.start_time.asc())
-        return(self.session.execute(statement).scalars().all())
+        result = await self.session.execute(statement)
+        return result.scalars().all()
 
 
 # ------------- UPDATE & DELETE ------------- #
 
 
-    def update_ride(
+    async def update_ride(
             self,
             ride: RideModel,         
             *,           
@@ -125,9 +136,10 @@ class RideRepository:
                 setattr(ride, key, value)
 
         self.session.add(ride)
-        self.session.flush()
+        await self.session.flush()
+        await self.session.refresh(ride)
         return ride
 
-    def delete_ride(self, *, ride: RideModel) -> None:
-        self.session.delete(ride)
-        self.session.flush()
+    async def delete_ride(self, *, ride: RideModel) -> None:
+        await self.session.delete(ride)
+        await self.session.flush()
