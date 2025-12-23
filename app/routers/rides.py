@@ -24,6 +24,7 @@ router = APIRouter()
 
 # ------------- RIDE ROUTES ------------- #
 
+# ------------- POST ------------- #
 @router.post(
     "/",
     response_model=RideResponse,
@@ -35,19 +36,20 @@ async def create_ride(
     ride_repository: Annotated[RideRepository, Depends(get_ride_repository)],
     current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> RideResponse:
-
+    """Create a new ride."""
     ride_model = await ride_repository.create_ride(
-    title = ride_to_create.title,
-    description = ride_to_create.description,
-    start_time = ride_to_create.start_time,
-    created_by_user_id = current_user.id,
+        title = ride_to_create.title,
+        description = ride_to_create.description,
+        start_time = ride_to_create.start_time,
+        created_by_user_id = current_user.id,
+        route_id = ride_to_create.route_id,
+        visibility = ride_to_create.visibility,
     ) 
     return RideResponse.model_validate(ride_model)
 
-create_ride.__doc__ = """
-    Create a new ride.
-    """
-    
+create_ride.__doc__ = "Create a new ride."
+
+# ------------- GET ------------- #    
 @router.get(
     "/",
     response_model=List[RideResponse],
@@ -56,7 +58,7 @@ create_ride.__doc__ = """
 async def get_list_rides(
     ride_repository: Annotated[RideRepository, Depends(get_ride_repository)],
 ) -> List[RideResponse]:
-    
+    """Get all rides in the database."""
     rides = await ride_repository.get_all_rides()
     return [RideResponse.model_validate(ride) for ride in rides]
 
@@ -74,14 +76,13 @@ async def get_owned_rides(
     ride_repository: Annotated[RideRepository, Depends(get_ride_repository)],
     current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> List[RideResponse]:
+    """Get all rides created by the current user."""
     owned_rides = await ride_repository.get_owned_rides(user_id=current_user.id)
     if not owned_rides:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
     return [RideResponse.model_validate(r) for r in owned_rides]
 
-get_owned_rides.__doc__ = """
-    Get all rides created by the current user.
-    """
+get_owned_rides.__doc__ = "Get all rides created by the current user."
 
 @router.get(
     "/joined",
@@ -98,9 +99,7 @@ async def get_joined_rides(
         raise HTTPException(status.HTTP_404_NOT_FOUND)
     return [RideResponse.model_validate(r) for r in joined_rides]
 
-get_joined_rides.__doc__ = """
-    Get all rides joined by the current user.
-    """
+get_joined_rides.__doc__ = "Get all rides joined by the current user."
 
 @router.get(
     "/available",
@@ -117,9 +116,7 @@ async def get_available_rides(
         raise HTTPException(status.HTTP_404_NOT_FOUND)
     return [RideResponse.model_validate(r) for r in available_rides]
 
-get_available_rides.__doc__ = """
-    Get all rides available for the current user.
-    """
+get_available_rides.__doc__ = "Get all rides available for the current user."
 
 
 @router.get(
@@ -139,9 +136,7 @@ async def get_ride_by_code(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return RideResponse.model_validate(ride) 
 
-get_ride_by_code.__doc__ = """
-    Get a ride by its code.
-    """
+get_ride_by_code.__doc__ = "Get a ride by its code."
 
 @router.get(
         "/{id}",
@@ -158,9 +153,7 @@ async def get_ride_by_id(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return RideResponse.model_validate(ride)
 
-get_ride_by_id.__doc__ = """
-    Get a ride by its id.
-    """
+get_ride_by_id.__doc__ = "Get a ride by its id."
 
 
 @router.get(
@@ -188,10 +181,9 @@ async def get_ride_participants(
         for p in participants 
     ]
 
-get_ride_participants.__doc__ = """
-    Get all participants of a ride.
-    """
+get_ride_participants.__doc__ = "Get all participants of a ride."
     
+# ------------- PUT ------------- #
 
 @router.put(
     "/{id}",
@@ -209,28 +201,30 @@ async def update_ride_by_id(
     current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> RideResponse:
     
-    existing_ride = await ride_repository.get_by_id(ride_id=id)
-    if not existing_ride:
+    selected_ride = await ride_repository.get_by_id(ride_id=id)
+    if not selected_ride:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     
-    if existing_ride.created_by_user_id != current_user.id:
+    if selected_ride.created_by_user_id != current_user.id:
         raise HTTPException(
             status_code = status.HTTP_403_FORBIDDEN,
             detail = "Not allowed to update this ride. It belongs to another user",
             )
     
     ride_model = await ride_repository.update_ride(
-        existing_ride,
+        selected_ride,
         title = ride_to_update.title,
         description = ride_to_update.description,
         start_time = ride_to_update.start_time,
         is_active = ride_to_update.is_active,
+        route_id = ride_to_update.route_id,
+        visibility = ride_to_update.visibility,
     )
     return RideResponse.model_validate(ride_model)
 
-update_ride_by_id.__doc__ = """
-    Update a ride by its id.
-    """
+update_ride_by_id.__doc__ = "Update a ride by its id."
+
+# ------------- DELETE ------------- #
 
 @router.delete(
     "/{id}",
@@ -258,7 +252,5 @@ async def delete_ride_by_id(
     await ride_repository.delete_ride(ride=selected_ride)    
     return
 
-delete_ride_by_id.__doc__ = """
-    Delete a ride by its id.
-    """
+delete_ride_by_id.__doc__ = "Delete a ride by its id."
 

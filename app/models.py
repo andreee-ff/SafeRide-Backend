@@ -1,12 +1,16 @@
+import enum
+from sqlalchemy import Enum as SqlEnum
+
 from datetime import datetime
 from sqlalchemy import String, ForeignKey, func, DateTime, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from typing import Optional
-from sqlalchemy import Numeric
+from sqlalchemy import Numeric, Text
 
 
 class DbModel(DeclarativeBase): 
     pass
+
+#------------------------ USER
 
 class UserModel(DbModel):
     __tablename__ = "users"
@@ -23,16 +27,53 @@ class UserModel(DbModel):
     def __repr__(self) -> str:
         return f"UserModel(id={self.id!r}, username={self.username!r})"
 
+
+#------------------------ ROUTE
+
+class RouteVisibility(enum.Enum):
+    ALWAYS = "always"
+    START_ONLY = "start"
+    SECRET = "secret"
+
+
+class RouteModel(DbModel):
+    __tablename__ = "routes"
+
+    id: Mapped[int]  = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(length=100), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    gpx_data: Mapped[str] = mapped_column(Text, nullable=False)
+    distance_meters: Mapped[float] = mapped_column(Numeric, nullable=False)
+    created_by_user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    rides: Mapped[list["RideModel"]] = relationship(back_populates="route")
+
+    def __repr__(self) -> str:
+        return f"RouteModel(id={self.id!r}, title={self.title!r})"
+
+
+#------------------------ RIDE
+
 class RideModel(DbModel):
     __tablename__ = "rides"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     code: Mapped[str] = mapped_column(String(length=6), nullable=False, unique=True)
     title: Mapped[str] = mapped_column(String(length=100), nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(String(length=255), nullable=True) 
-    start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)    
+    start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    route_id: Mapped[int] = mapped_column(
+        ForeignKey("routes.id", ondelete="RESTRICT"),
+        nullable=True,
+        )
     created_by_user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="RESTRICT"),
+        ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
@@ -41,14 +82,19 @@ class RideModel(DbModel):
     is_active: Mapped[bool] = mapped_column(nullable=False, default=True)
 
     organizer: Mapped["UserModel"] = relationship(back_populates="organized_rides")
+    route: Mapped["RouteModel"] = relationship(back_populates="rides")
     has_participants: Mapped[list["ParticipationModel"]] = relationship(
         back_populates="ride",
         cascade="all, delete-orphan"
     )
 
+    visibility: Mapped[RouteVisibility] = mapped_column(SqlEnum(RouteVisibility), default=RouteVisibility.ALWAYS)
+
     def __repr__(self) -> str:
         return f"RideModel(id={self.id!r}, code={self.code!r}, title={self.title!r})"
 
+
+#------------------------ PARTICIPATION
 
 class ParticipationModel(DbModel):
     __tablename__ = "participations"
@@ -78,4 +124,5 @@ class ParticipationModel(DbModel):
 
     def __repr__(self) -> str:
         return f"ParticipationModel(id={self.id!r}, user_id={self.user_id!r}, ride_id={self.ride_id!r})"
+
 

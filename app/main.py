@@ -60,6 +60,12 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(
+        routers.route_router,
+        prefix="/routes",
+        tags=["Routes"],
+    )
+
+    app.include_router(
         routers.participation_router,
         prefix="/participations",
         tags=["Participation"],

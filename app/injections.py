@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import AsyncSessionLocal
 
-from app.repositories import UserRepository, RideRepository, ParticipationRepository
+from app.repositories import UserRepository, RideRepository, ParticipationRepository, RouteRepository
 
 # def get_session(request: Request) -> Generator[Session]:
 #     with (session := Session(bind=request.app.state.database_engine)).begin():
@@ -29,4 +29,9 @@ def get_participation_repository(
         session: Annotated[AsyncSession, Depends(get_session)]
 ) -> ParticipationRepository:
     return ParticipationRepository(session=session)
+
+def get_route_repository(
+        session: Annotated[AsyncSession, Depends(get_session)]
+) -> RouteRepository:
+    return RouteRepository(session=session)
 

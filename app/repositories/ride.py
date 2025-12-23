@@ -7,7 +7,7 @@ from sqlalchemy import select
 from typing import Sequence
 import secrets, string
 
-from app.models import ParticipationModel, RideModel
+from app.models import ParticipationModel, RideModel, RouteVisibility
 
 
 class RideRepository:
@@ -37,6 +37,8 @@ class RideRepository:
             description: str | None,
             start_time: datetime,
             created_by_user_id: int,
+            route_id: int | None = None,
+            visibility: RouteVisibility = RouteVisibility.ALWAYS
         ) -> RideModel:
         unique_code = await self._generate_unique_code()
         new_ride = RideModel(
@@ -45,6 +47,8 @@ class RideRepository:
             description=description,
             start_time=start_time,
             created_by_user_id=created_by_user_id,
+            route_id=route_id,
+            visibility=visibility
         ) 
 
         self.session.add(new_ride)
@@ -88,9 +92,11 @@ class RideRepository:
         return result.scalar_one_or_none()
     
     async def get_owned_rides(self, *, user_id: int) -> Sequence[RideModel]:
-        statement = select(RideModel).where(
-            RideModel.created_by_user_id == user_id
-            ).order_by(RideModel.start_time.asc())
+        statement = (
+            select(RideModel)
+            .where(RideModel.created_by_user_id == user_id)
+            .order_by(RideModel.start_time.asc())
+        )
         result = await self.session.execute(statement)
         return result.scalars().all()
 
@@ -123,12 +129,16 @@ class RideRepository:
             description: str | None = None,
             start_time: datetime | None = None,
             is_active: bool | None = None,
-        ) -> RideModel:
+            route_id: int | None = None,
+            visibility: RouteVisibility | None = None,
+        ) -> RideModel | None:
         ride_to_update ={
             "title": title,
             "description": description,
             "start_time": start_time,
             "is_active": is_active,
+            "route_id": route_id,
+            "visibility": visibility,
         }
 
         for key, value in ride_to_update.items():

@@ -49,7 +49,7 @@ async def animate_task(ride_code: str, initial_movers: list[dict]):
                     "user_id": m["user_id"],
                     "latitude": m["lat"],
                     "longitude": m["lon"],
-                    "location_timestamp": datetime.datetime.utcnow().isoformat()
+                    "location_timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
                 }
                 # Fix: Emit 'location_update' (what client listens to) to the specific room
                 await sio.emit("location_update", payload, room=ride_code)
@@ -68,11 +68,11 @@ async def animate_participants(
     Animates ALL participants currently in the ride DB.
     """
     # Fetch by ID as requested
-    ride = ride_repository.get_by_id(ride_id=data.ride_id)
+    ride = await ride_repository.get_by_id(ride_id=data.ride_id)
     if not ride:
         raise HTTPException(status_code=404, detail="Ride not found")
         
-    parts = participation_repository.get_by_ride_id(ride_id=ride.id)
+    parts = await participation_repository.get_by_ride_id(ride_id=ride.id)
     
     # Prepare data for background task (detach from DB session)
     base_lat = 48.1351

@@ -91,6 +91,8 @@ async def test_get_ride_by_code_success(
         "created_at": ANY,
         "updated_at": ANY,
         "is_active": ANY,
+        "route_id": ANY,
+        "visibility": ANY,
     }
 
     response = await test_client.get(f"/rides/code/{test_ride.code}")
@@ -113,6 +115,8 @@ async def test_get_ride_by_id_success(
         "created_at": ANY,
         "updated_at": ANY,
         "is_active": ANY,
+        "route_id": ANY,
+        "visibility": ANY,
     }
 
     response = await test_client.get(f"/rides/{test_ride.id}")
@@ -163,7 +167,7 @@ async def test_delete_ride_by_id_success(
 async def test_edit_ride_by_id_success(
         test_client: AsyncClient,
         test_ride: RideModel,
-        auth_headers: dict[str|str],
+        auth_headers: dict[str, str],
 ):
     create_payload = {        
         "title": test_ride.title,
@@ -208,6 +212,8 @@ async def test_edit_ride_by_id_success(
         "created_at": created_ride["created_at"],
         "updated_at": response_data["updated_at"],
         "is_active": update_payload["is_active"],
+        "route_id": response_data["route_id"],
+        "visibility": response_data["visibility"],
     }
     assert response_data == expected_response
     

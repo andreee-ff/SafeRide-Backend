@@ -31,8 +31,8 @@ async def create_user(
         UserRepository, Depends(get_user_repository)
     ],
 ) -> UserResponse:
-    existing_user = await user_repository.get_by_username(username=user_to_create.username)
-    if existing_user:
+    selected_user = await user_repository.get_by_username(username=user_to_create.username)
+    if selected_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT)
 
     try:
@@ -54,10 +54,10 @@ async def get_user(
         UserRepository, Depends(get_user_repository)
     ],
 ) -> UserResponse:
-    user = await user_repository.get_by_id(user_id=id)
-    if not user:
+    selected_user = await user_repository.get_by_id(user_id=id)
+    if not selected_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    return UserResponse.model_validate(user)
+    return UserResponse.model_validate(selected_user)
 
 @router.get(
      "/",

@@ -1,5 +1,6 @@
 from datetime import datetime, timezone, timedelta
-from pydantic import BaseModel, ConfigDict, field_serializer,field_validator
+from pydantic import BaseModel, ConfigDict, field_serializer, field_validator, Field
+from app.models import RouteVisibility
 
 
 class TimestampMixin(BaseModel):
@@ -18,8 +19,9 @@ class TimestampMixin(BaseModel):
 #------------------------ USER
 
 class UserCreate(BaseModel):
-    username: str
-    password: str
+    username: str = Field(..., min_length=3, max_length=30)
+    password: str = Field(..., min_length=6)
+    
 
 class UserResponse(TimestampMixin):
     id: int
@@ -39,6 +41,8 @@ class RideBase(BaseModel):
     title: str
     description: str | None = None
     start_time: datetime
+    route_id: int | None = None
+    visibility: RouteVisibility = RouteVisibility.ALWAYS
 
 class RideCreate(RideBase):
     pass
@@ -53,9 +57,9 @@ class RideResponse(RideBase, TimestampMixin):
 
 class RideUpdate(RideBase):
     title: str | None = None
-    description: str | None = None
     start_time: datetime | None = None
     is_active: bool | None = None
+    visibility: RouteVisibility | None = None
 
 
 #------------------------ PARTICIPATION
@@ -111,6 +115,28 @@ class ParticipantResponse(TimestampMixin):
     location_timestamp: datetime | None = None
 
 
+#------------------------ ROUTE
+class RouteBase(TimestampMixin):
+    title: str
+    description: str | None = None
+    gpx_data: str
+
+class RouteCreate(RouteBase):
+    pass
+
+class RouteUpdate(RouteBase):
+    title: str | None = None
+    gpx_data: str | None = None
+
+class RouteResponse(RouteBase):
+    id: int 
+    distance_meters: float
+    created_by_user_id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    
+
 #------------------------ SIMULATION 
 
 class SimulationStart(BaseModel):
@@ -120,4 +146,3 @@ class SimulationStart(BaseModel):
     
 class SimulationAnimate(BaseModel):
     ride_id: int
-

@@ -62,7 +62,7 @@ async def get_participation_by_id(
 
 
 
-# ------------- PARTICIPATION POST ROUTE ------- #
+# -------------  POST  ------- #
 
 @router.post(
     "/",
@@ -93,7 +93,7 @@ async def create_participation(
     
     return ParticipationResponse.model_validate(participation_model)
 
-# ------------- PARTICIPATION UPDATE ROUTE ------- #
+# -------------  PUT  ------- #
 
 @router.put(
     "/{id}",
@@ -138,7 +138,7 @@ async def update_participation_by_id(
     return ParticipationResponse.model_validate(participation_model)
 
 
-# ------------- PARTICIPATION DELETE ROUTE ------- #
+# -------------  DELETE  ------- #
 
 @router.delete(
     "/{id}",

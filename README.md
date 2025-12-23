@@ -425,10 +425,11 @@ The collection includes all API endpoints organized by feature (Users, Authentic
 **Note:** Tests use SQLite in-memory database (no PostgreSQL required for testing)
 
 ```sh
-# Run all 128 tests
-pytest
+# Run tests inside Docker (Recommended)
+docker-compose exec backend pytest
 
-# Run tests with coverage report
+# Run tests locally (requires environment setup)
+pytest
 pytest --cov=app --cov-report=html
 ```
 
@@ -747,7 +748,12 @@ saferide_api/
 ### Adding New Tests
 Tests should go in `/tests` for original tests or `AI_Assistant_Analysis/comprehensive_tests/` for additional integration tests.
 
-Running tests:
+Running tests (Docker):
+```sh
+docker-compose exec backend pytest
+```
+
+Running tests (Local):
 ```sh
 pytest tests/ -v
 ```

@@ -62,7 +62,7 @@ async def update_location(sid, data):
 
     # 1. BROADCAST 
     await sio.emit('location_update', {
-        'User_id': user_id,
+        'user_id': user_id,
         'latitude': latitude,
         'longitude': longitude,
         'location_timestamp': location_timestamp
