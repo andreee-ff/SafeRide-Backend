@@ -14,6 +14,7 @@ from sqlalchemy.pool import NullPool
 from app.injections import get_session
 from app.main import create_app
 from app.models import DbModel, UserModel, RideModel, ParticipationModel
+from app.security import get_password_hash
 
 # Используем файловую базу с NullPool для надежности в асинхронных тестах
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
@@ -64,7 +65,8 @@ async def test_client(app: FastAPI, session: AsyncSession) -> AsyncGenerator[Asy
 
 @pytest_asyncio.fixture(scope="function")
 async def test_user(session: AsyncSession) -> UserModel:
-    user = UserModel(username="testuser", password="testpassword")
+    hashed_password = get_password_hash("testpassword")
+    user = UserModel(username="testuser", password=hashed_password)
     session.add(user)
     await session.commit()
     await session.refresh(user)
@@ -103,7 +105,8 @@ async def auth_headers(test_client: AsyncClient, session: AsyncSession) -> dict[
     # Создаем пользователя для логина
     username = "auth_user"
     password = "authpassword"
-    user = UserModel(username=username, password=password)
+    hashed_password = get_password_hash(password)
+    user = UserModel(username=username, password=hashed_password)
     session.add(user)
     await session.commit()
 

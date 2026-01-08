@@ -123,7 +123,16 @@ async def client(test_db):
         app = app.other_asgi_app
     
     async def override_get_session():
-        yield test_db
+        # STRATEGY #1: Mimic the behavior of the real get_session,
+        # but use the session from the test_db fixture.
+        # Use begin_nested() or just begin() if the session is not yet in a transaction.
+        # In SQLAlchemy 2.0+, the session usually starts a transaction on first use.
+        if not test_db.in_transaction():
+            async with test_db.begin():
+                yield test_db
+        else:
+            async with test_db.begin_nested():
+                yield test_db
     
     app.dependency_overrides[get_session] = override_get_session
     

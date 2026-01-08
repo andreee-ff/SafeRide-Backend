@@ -6,6 +6,7 @@ from sqlalchemy import select
 from typing import Sequence
 
 from app.models import UserModel
+from app.security import get_password_hash
 
 
 class UserRepository:
@@ -15,7 +16,8 @@ class UserRepository:
         self.session = session
     
     async def create_user(self, *,  username: str, password: str) -> UserModel:
-        new_user = UserModel(username=username, password=password)
+        hashed_password = get_password_hash(password)
+        new_user = UserModel(username=username, password=hashed_password)
         self.session.add(new_user)
         await self.session.flush()
         return new_user

@@ -2,6 +2,7 @@ from typing import Optional, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from app.models import RouteModel
+from app.utils.geo import calculate_gpx_distance
 
 class RouteRepository:
     def __init__(self, session: AsyncSession):
@@ -37,6 +38,9 @@ class RouteRepository:
         created_by_user_id: int,
         distance_meters: float = 0.0
     ) -> RouteModel:
+        if distance_meters == 0.0:
+            distance_meters = calculate_gpx_distance(gpx_data)
+
         route = RouteModel(
             title=title,
             description=description,
@@ -45,7 +49,7 @@ class RouteRepository:
             distance_meters=distance_meters
         )
         self.session.add(route)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(route)
         return route
 
@@ -72,7 +76,7 @@ class RouteRepository:
                 setattr(route, key, value)
 
         self.session.add(route)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(route)
         return route
 
@@ -80,6 +84,4 @@ class RouteRepository:
 
     async def delete_route(self, *,route: RouteModel) -> None:
         await self.session.delete(route)
-        await self.session.commit()
-
-
+        await self.session.flush()

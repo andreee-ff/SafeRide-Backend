@@ -30,9 +30,9 @@ class UserModel(DbModel):
 
 #------------------------ ROUTE
 
-class RouteVisibility(enum.Enum):
+class RouteVisibility(str, enum.Enum):
     ALWAYS = "always"
-    START_ONLY = "start"
+    START = "start"
     SECRET = "secret"
 
 

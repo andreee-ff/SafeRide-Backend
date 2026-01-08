@@ -16,6 +16,7 @@ from sqlalchemy.pool import NullPool
 from app.injections import get_session
 from app.main import create_app
 from app.models import DbModel, UserModel, RideModel
+from app.security import get_password_hash
 
 # Use a separate file DB for pending tests (async driver)
 DB_PATH = os.path.join(os.path.dirname(__file__), "pending_tests.db")
@@ -58,7 +59,8 @@ async def test_client(app: FastAPI, session: AsyncSession) -> AsyncGenerator[Asy
 
 @pytest_asyncio.fixture(scope="function")
 async def test_user(session: AsyncSession) -> UserModel:
-    user = UserModel(username="testuser", password="testpassword")
+    hashed_password = get_password_hash("testpassword")
+    user = UserModel(username="testuser", password=hashed_password)
     session.add(user)
     await session.commit()
     await session.refresh(user)
@@ -80,7 +82,8 @@ async def test_ride(session: AsyncSession, test_user: UserModel) -> RideModel:
 
 @pytest_asyncio.fixture(scope="function")
 async def auth_headers(test_client: AsyncClient, session: AsyncSession) -> dict[str, str]:
-    user = UserModel(username="auth_user", password="authpassword")
+    hashed_password = get_password_hash("authpassword")
+    user = UserModel(username="auth_user", password=hashed_password)
     session.add(user)
     await session.commit()
 

@@ -13,7 +13,8 @@ from app.repositories import UserRepository, RideRepository, ParticipationReposi
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
-        yield session
+        async with session.begin():
+            yield session
 
 def get_user_repository(
         session: Annotated[AsyncSession, Depends(get_session)]

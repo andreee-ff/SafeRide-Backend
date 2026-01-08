@@ -3,6 +3,7 @@ from httpx import AsyncClient
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import UserModel, RideModel
+from app.security import get_password_hash
 import secrets
 
 @pytest.mark.asyncio
@@ -21,7 +22,7 @@ async def test_multiple_users_same_ride(
         # 1. Create unique user
         username = f"user_conc_{i}_{secrets.token_hex(4)}"
         password = "password"
-        user = UserModel(username=username, password=password)
+        user = UserModel(username=username, password=get_password_hash(password))
         session.add(user)
         await session.commit()
         await session.refresh(user)

@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import RideModel, UserModel
 from app.repositories import RideRepository
+from app.security import get_password_hash
 from tests.conftest import RideFactoryType
 
 @pytest.mark.asyncio
@@ -220,7 +221,8 @@ async def test_edit_ride_by_id_success(
 @pytest.mark.asyncio
 async def test_update_ride_updates_only_given_fields_without_api(session: AsyncSession):
 
-    user = UserModel(username="creator", password="pass")
+    hashed_password = get_password_hash("pass")
+    user = UserModel(username="creator", password=hashed_password)
     session.add(user)
     await session.commit()
 

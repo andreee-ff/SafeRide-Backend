@@ -37,6 +37,7 @@ async def create_ride(
     current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> RideResponse:
     """Create a new ride."""
+    print(f"DEBUG: Creating ride with data: {ride_to_create}")
     ride_model = await ride_repository.create_ride(
         title = ride_to_create.title,
         description = ride_to_create.description,

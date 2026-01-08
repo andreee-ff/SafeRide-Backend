@@ -14,9 +14,9 @@ from app.schemas import (
     UserResponse,
     TokenResponse,
 )
-from app.security import create_access_token
-
+from app.security import create_access_token, verify_password
 from app.routers.dependencies import get_current_user
+
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -32,7 +32,7 @@ async def login(
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
 ) -> TokenResponse:
     user = await user_repository.get_by_username(username=form_data.username)
-    if not user or user.password != form_data.password:
+    if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password",

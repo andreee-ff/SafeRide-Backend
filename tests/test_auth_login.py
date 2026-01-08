@@ -16,7 +16,7 @@ async def test_login_success(
 ):
     payload = {
         "username": test_user.username,
-        "password": test_user.password,
+        "password": "testpassword",
      }
     expected_response = {
         "access_token": ANY,
@@ -50,7 +50,7 @@ async  def test_login_me_with_token_success(
 ):
     login_payload = {
         "username": test_user.username,
-        "password": test_user.password,
+        "password": "testpassword",
     }
     login_response = await test_client.post("/auth/login", data=login_payload)
     assert login_response.status_code == status.HTTP_200_OK, login_response.text

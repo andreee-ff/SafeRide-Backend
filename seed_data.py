@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
 from app.models import DbModel, UserModel, RideModel, ParticipationModel
+from app.security import get_password_hash
 
 
 
@@ -22,7 +23,8 @@ def seed(engine):
         # Fixed user Vadim
         vadim = session.query(UserModel).filter_by(username="vadim").first()
         if not vadim:
-            vadim = UserModel(username="vadim", password="123456")
+            hashed_password = get_password_hash("123456")
+            vadim = UserModel(username="vadim", password=hashed_password)
             session.add(vadim)
             session.flush()
             print("👤 Created fixed user: vadim / 123456")
@@ -135,7 +137,7 @@ def seed_massive(engine, num_users=10, num_rides=20, num_participations=50):
         # ---------------- FIXED USER ----------------
         vadim = session.query(UserModel).filter_by(username="vadim").first()
         if not vadim:
-            vadim = UserModel(username="vadim", password="123456")
+            vadim = UserModel(username="vadim", password=get_password_hash("123456"))
             session.add(vadim)
             session.flush()
             print("👤 Created user: vadim (fixed user)")
@@ -147,7 +149,7 @@ def seed_massive(engine, num_users=10, num_rides=20, num_participations=50):
         # ---------------- USERS ----------------
         for _ in range(num_users):
             username = random_username()
-            user = UserModel(username=username, password=random_password())
+            user = UserModel(username=username, password=get_password_hash(random_password()))
             session.add(user)
             session.flush()
             users.append(user)

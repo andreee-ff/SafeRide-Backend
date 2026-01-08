@@ -1,104 +1,62 @@
-# SafeRide API - Testing Guide
+# 🧪 SafeRide API - Testing Guide
 
-## Test Structure
+## Test Architecture
 
-- `tests/` - Core Functional & Unit tests
-- `AI_Assistant_Analysis/integration_tests/` - End-to-end Integration tests
-- `AI_Assistant_Analysis/comprehensive_tests/` - Edge cases and System tests
-- `AI_Assistant_Analysis/pending_tests/` - New feature validation tests
+The testing strategy covers functional units, integration points, and high-concurrency scenarios to ensure system reliability.
 
-**Total:** 128 tests (100% passing)
+- `tests/` — Core Functional and Unit tests.
+- `AI_Assistant_Analysis/integration_tests/` — End-to-end integration flows.
+- `AI_Assistant_Analysis/comprehensive_tests/` — Edge cases and system-level validation.
+- `AI_Assistant_Analysis/pending_tests/` — Regression and new feature validation.
 
-## Test Types
+**Current Status:** 138 tests (100% passing).
 
-### 1. Standard Tests (SQLite)
-Fast tests that work without external dependencies. This is the default mode.
+## Execution Modes
+
+### 1. Standard Suite (SQLite)
+Fast, in-memory testing without external dependencies. This is the recommended mode for local development.
 ```bash
 pytest
-# Result: 95 passed, 2 deselected
 ```
 
-### 2. PostgreSQL Tests
-Tests that require PostgreSQL (CASCADE DELETE, UNIQUE constraints):
+### 2. High-Fidelity Suite (PostgreSQL)
+Specific tests that validate database-level features like `CASCADE DELETE` and `UNIQUE` constraints.
 
-**Step 1:** Start PostgreSQL
+**Step 1: Start PostgreSQL (Docker)**
 ```bash
-docker start saferide_postgres
-
-# Or create new container:
-docker run --name saferide_postgres \
-  -e POSTGRES_USER=saferide_user \
-  -e POSTGRES_PASSWORD=MyPass2025vadim \
-  -e POSTGRES_DB=saferide_db \
-  -p 5432:5432 -d postgres:16
+docker-compose up -d db
 ```
 
-**Step 2:** Run PostgreSQL tests
+**Step 2: Run PostgreSQL-tagged tests**
 ```bash
 pytest -m postgres -v
-# Result: 2 passed, 95 deselected
 ```
 
-## Running Tests
+## Advanced Usage
 
+### Target Specific Domains
 ```bash
-# Unit tests only (fast)
+# Core logic only
 pytest tests/
 
-# Integration tests only
+# Integration flows only
 pytest AI_Assistant_Analysis/integration_tests/
 
-# Comprehensive tests only
+# Comprehensive system checks
 pytest AI_Assistant_Analysis/comprehensive_tests/
-
-# All tests (excluding PostgreSQL)
-pytest
-
-# PostgreSQL tests only
-pytest -m postgres
-
-# All tests including PostgreSQL
-pytest AI_Assistant_Analysis/ tests/
 ```
 
-## Pytest Markers
+### Filtering and Markers
+- `@pytest.mark.postgres`: Identifies tests requiring a live PostgreSQL instance.
+- **Default Behavior:** PostgreSQL tests are skipped by default to ensure speed (configured in `pytest.ini`).
 
-- `@pytest.mark.postgres` - tests requiring PostgreSQL database
+## Key Test Scenarios
+1. **Cascade Verification**: Ensures that deleting a ride automatically removes all associated participant records.
+2. **Concurrency Safety**: Validates that users cannot join the same ride multiple times simultaneously.
+3. **Security Audit**: Verifies that protected endpoints strictly require valid JWT tokens and that password hashing is enforced.
 
-## PostgreSQL Tests
-
-1. **test_delete_ride_with_participations** - Verifies CASCADE DELETE  
-   When a ride is deleted, all related participations are automatically deleted
-
-2. **test_duplicate_participation_same_user** - Verifies UNIQUE constraint  
-   User cannot join the same ride twice (409 CONFLICT)
-
-## Configuration
-
-**pytest.ini:**
-```ini
-[pytest]
-markers =
-    postgres: tests that require PostgreSQL database
-
-addopts = -m "not postgres"  # Skip PostgreSQL tests by default
-```
-
-## Examples
-
+## Troubleshooting
+For detailed logs during test execution:
 ```bash
-# SQLite tests only (fast, default)
-pytest
-
-# PostgreSQL tests only
-pytest -m postgres
-
-# All tests (SQLite + PostgreSQL)
-pytest AI_Assistant_Analysis/ tests/
-
-# Specific PostgreSQL test
-pytest -m postgres -k test_duplicate_participation_same_user -v
-
-# Verbose output
 pytest -v --tb=short
 ```

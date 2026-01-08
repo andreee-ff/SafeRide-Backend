@@ -4,6 +4,7 @@ from fastapi import status
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import UserModel, RideModel
+from app.security import get_password_hash
 
 @pytest.mark.asyncio
 async def test_create_ride_requires_authentication(test_client: AsyncClient):
@@ -23,7 +24,7 @@ async def test_only_creator_can_delete_ride(
 ):
     """Verify that only ride creator can delete it"""
     # 1. Create a user (victim) and their ride
-    victim = UserModel(username="victim", password="password")
+    victim = UserModel(username="victim", password=get_password_hash("password"))
     session.add(victim)
     await session.commit()
     await session.refresh(victim)
@@ -39,7 +40,7 @@ async def test_only_creator_can_delete_ride(
     await session.refresh(victim_ride)
     
     # 2. Login as attacker
-    attacker = UserModel(username="attacker", password="password")
+    attacker = UserModel(username="attacker", password=get_password_hash("password"))
     session.add(attacker)
     await session.commit()
     

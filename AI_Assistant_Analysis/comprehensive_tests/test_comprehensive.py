@@ -9,6 +9,7 @@ from httpx import AsyncClient
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import RideModel, UserModel, ParticipationModel
+from app.security import get_password_hash
 
 
 @pytest.mark.asyncio
@@ -352,14 +353,15 @@ class TestConcurrency:
         
         # Создаем нескольких пользователей
         for i in range(3):
-            user = UserModel(username=f"participant{i}", password="password")
+            hashed_password = get_password_hash("password")
+            user = UserModel(username=f"participant{i}", password=hashed_password)
             session.add(user)
             await session.commit()
             
             # Логиним и создаем участие
             login_response = await test_client.post(
                 "/auth/login",
-                data={"username": user.username, "password": "password"},
+                data={"username": f"participant{i}", "password": "password"},
             )
             token = login_response.json()["access_token"]
             headers = {"Authorization": f"Bearer {token}"}
